@@ -82,13 +82,12 @@ function getNumberOfCardsForPlayers(numPlayers) {
 
 /**
  * Get the number of sequences needed for a win
- * @param {str} numPlayers 
  * @param {str} numTeams 
  */
-function getNumberOfSequencesForWin(numPlayers, numTeams) {
-  if (numPlayers === 2 || numTeams === 2) {
+function getNumberOfSequencesForWin(numTeams) {
+  if (numTeams === 2) {
     return 2;
-  } else if (numPlayers === 3 || numTeams === 3) {
+  } else if (numTeams === 3) {
     return 1;
   }
 }
@@ -308,6 +307,8 @@ function initializeCardBoard() {
  * @param {str} gameRoomId 
  */
 function initializeGameState(gameRoomId, numPlayers) {
+  var numTeams = getNumberOfTeamsForPlayers(numPlayers);
+  var numSequencesForWin = getNumberOfSequencesForWin(numTeams);
   var GameState = {
     cardDeck: shuffle(CARDS_IN_DECK),
     deadCards: [],
@@ -317,6 +318,8 @@ function initializeGameState(gameRoomId, numPlayers) {
     board: initializeCardBoard(),
     numCardsPerPerson: getNumberOfCardsForPlayers(numPlayers),
     numPlayers: numPlayers,
+    numTeams: numTeams,
+    numSequencesForWin: numSequencesForWin,
     players: new Map(),
     teams: new Map(), // key will be RED, GREEN or BLUE 
     // value will contain sequences (array of positions of each sequence, players array)

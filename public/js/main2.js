@@ -49,6 +49,8 @@ var ModalType = {
 
 var NUMBER_OF_PLAYERS = [2, 3, 4, 6, 8, 9, 12];
 
+var WINNER_GIFS = ["/imgs/cardWinner.gif", "/imgs/cardWinner2.gif", "/imgs/cardWinner3.gif", "/imgs/cardWinner4.gif", "/imgs/cardWinner5.gif", "/imgs/cardWinner6.gif", "/imgs/cardWinner7.gif", "/imgs/cardWinner8.gif"];
+
 // Map of the cards and their position in GameState.board
 var CARD_POSITIONS = {
   '2S1': {x: 1, y: 0},
@@ -162,6 +164,25 @@ var CARD_POSITIONS = {
 var highlightedCards = {
   // key, value where key is index of card in hand and value is true or false depending
   // on if the card is highlighted
+}
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive).
+ * The value is no lower than min (or the next integer greater than min
+ * if min isn't an integer) and no greater than max (or the next integer
+ * lower than max if max isn't an integer).
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+function getRandomWinnerGif() {
+  var index = getRandomInt(0, WINNER_GIFS.length - 1);
+  return WINNER_GIFS[index];
 }
 
 /****************************************************************************
@@ -443,12 +464,17 @@ function renderHeader() {
 
 // TODO: only render new sequences
 function renderSequences() {
+  var numSequences = 0;
   for (var color in Team) {
     if (GameState.teams.get(color)) {
       for (var sequence of GameState.teams.get(color).sequences) {
         console.log('render sequence');
+        numSequences++;
         // get the ids of each sequence and set border around it
         putBorderAroundSequence(sequence, color);
+        if (numSequences === GameState.numSequencesForWin) {
+          renderModal(ModalType.DISPLAY_WINNER, color);
+        }
       }
     }
   }
@@ -735,6 +761,16 @@ function renderToggle() {
   }, false);
 }
 
+function createWinnerModal(winningTeam) {
+  var div = document.createElement('div');
+  div.className = 'winner-modal';
+  // create img
+  var img = document.createElement('img');
+  img.src = getRandomWinnerGif();
+  div.appendChild(img);
+  return div;
+}
+
 /**
  *  Render modal either for
  *  a) Game lobby
@@ -742,7 +778,7 @@ function renderToggle() {
  *  c) displaying a player's winning card combos
  * @param modalType: type of modal to display
  */
-function renderModal(modalType) {
+function renderModal(modalType, winningTeam) {
   var modal = document.getElementById('myModal');
   var modalContent = document.getElementById('modal-content');
   modalContent.innerHTML = '<span class="close">&times;</span>';
@@ -754,14 +790,31 @@ function renderModal(modalType) {
     modalContent.innerHTML += modalHeader;
     modalContent.appendChild(createOptionForm());
   } else if (modalType === ModalType.JOIN_NEW_GAME || modalType === ModalType.CREATE_NEW_GAME_FORM) {
-      modalContent.innerHTML = '';
-      var newGame = modalType === ModalType.CREATE_NEW_GAME_FORM;
-      var modalHeader = '<h4 style="font-size:1.5rem;font-weight:bold;center;letter-spacing:-1px">';
-      modalHeader += (newGame ? 'Create new game' : 'Join existing game');
-      modalHeader += "</h4>";
-      modalContent.innerHTML += modalHeader;
-      modalContent.appendChild(createPlayForm(newGame));
-      addDisableEnableButton();
+    modalContent.innerHTML = '';
+    var newGame = modalType === ModalType.CREATE_NEW_GAME_FORM;
+    var modalHeader = '<h4 style="font-size:1.5rem;font-weight:bold;center;letter-spacing:-1px">';
+    modalHeader += (newGame ? 'Create new game' : 'Join existing game');
+    modalHeader += "</h4>";
+    modalContent.innerHTML += modalHeader;
+    modalContent.appendChild(createPlayForm(newGame));
+    addDisableEnableButton();
+  } else if (modalType === ModalType.DISPLAY_WINNER) {
+    modalContent.innerHTML + '';
+    modalContent.style.border = "1rem solid " + TeamBorderColor[winningTeam];
+    var modalHeader = '<h4 style="font-size:1.5rem;font-weight:bold;center;letter-spacing:-1px">';
+    modalHeader += "Team " + winningTeam + " won!";
+    modalHeader += "</h4>";
+    // create list of winning players name
+    var winnersList = document.createElement('h4');
+    var winningPlayerIds = GameState.teams.get(winningTeam).players;
+    for (var playerId of winningPlayerIds) {
+      var playerName = GameState.players.get(playerId).name;
+      winnersList.innerHTML += playerName + ", ";
+    }
+    winnersList.innerHTML = winnersList.innerHTML.substring(0, winnersList.innerHTML.length - 2);
+    modalContent.innerHTML += modalHeader;
+    modalContent.appendChild(winnersList);
+    modalContent.appendChild(createWinnerModal(winningTeam));
   }
   if (modalType === ModalType.JOIN_NEW_GAME || modalType === ModalType.GAME_LOBBY || modalType === ModalType.CREATE_NEW_GAME_FORM) {
       modal.style.display = "block";
