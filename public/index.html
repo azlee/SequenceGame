@@ -6,10 +6,18 @@
   <title>Sequence game</title>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
+  <script type="text/javascript" src="js/main2.js"></script>
   <link rel="stylesheet" href="style/main.css"/>
   </head>
   <body>
+
+    <!-- Modal for displaying game lobby
+      -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content" id="modal-content">
+      </div>
+    </div>
 
     <div class="card-board" id="card-board">
       <img src="imgs/overlay.png" class="wildcard" style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;">
@@ -134,10 +142,15 @@
     </div>
 
     <br>
-    <hr>
     <br>
 
-    <div class="cards-in-hand" id="cards-in-hand">
+    <div class="footer">
+      <label class="switch" id="toggle" style="display:none;">
+        <input type="checkbox" name="checkbox" id="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <div class="cards-in-hand" id="cards-in-hand">
+      </div>
     </div>
 
   </body>

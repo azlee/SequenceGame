@@ -93,6 +93,21 @@ function getNumberOfSequencesForWin(numPlayers, numTeams) {
   }
 }
 
+/**
+ * Get the number of occurences of element in arr
+ * @param {*} element 
+ * @param {*}} arr 
+ */
+function numElementInArr(element, arr) {
+  var occurences = 0;
+  for (var elem of arr) {
+      if (element === elem) {
+          occurences++;
+      }
+  }
+  return occurences;
+}
+
 /****************************************************************************
 * 
 * Constants
@@ -109,6 +124,8 @@ var TeamColor = {
   GREEN: "GREEN",
   BLUE: "BLUE"
 };
+
+var COLORS = ["GREEN", "BLUE", "RED"]
 
 var SequenceType = {
   HORIZONTAL: "HORIZONTAL",
@@ -141,10 +158,10 @@ var CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', 
                          ['AC2', '7S2', '6S2', '5S2', '4S2', '3S2', '2S2', '2H2', '3H2', '5D2'], 
                          ['W', 'AD2', 'KD2', 'QD2', '10D2', '9D2', '8D2', '7D2', '6D2', 'W']];
 var WRONG_NUMBER_PLAYERS_ERROR = "%s players is not supported.";
-var NUM_CARDS_PER_PLAYER = 7;
 
 const MoveType = {
   PLACE_TOKEN: "PLACE TOKEN",
+  REMOVE_TOKEN: "REMOVE TOKEN",
   SHOW_CARDS_ON_BOARD: "SHOW CARDS ON BOARD"
 }
 
@@ -257,6 +274,10 @@ var CARD_POSITIONS = {
   '6D2': {x: 8, y: 9}
 }
 
+var INVALID_ROOM_CODE_ERROR = "Invalid room code";
+var MAX_PLAYERS_ERROR = "Invalid room code";
+var PLAYER_WITH_SAME_NAME_ERROR = "Player with name '%s' is already in game. Choose different name";
+
 /****************************************************************************
 * 
 * Game state accessors & creators
@@ -286,19 +307,39 @@ function initializeCardBoard() {
  * Initialize game state
  * @param {str} gameRoomId 
  */
-function initializeGameState(gameRoomId) {
+function initializeGameState(gameRoomId, numPlayers) {
   var GameState = {
     cardDeck: shuffle(CARDS_IN_DECK),
+    deadCards: [],
     discardCards: [],
     currentPlayer: 0,
     gameId: gameRoomId,
     board: initializeCardBoard(),
-    numCardsPerPerson: NUM_CARDS_PER_PLAYER,
+    numCardsPerPerson: getNumberOfCardsForPlayers(numPlayers),
+    numPlayers: numPlayers,
     players: new Map(),
     teams: new Map(), // key will be RED, GREEN or BLUE 
     // value will contain sequences (array of positions of each sequence, players array)
   }
   return GameState;
+}
+
+function getNumberOfTeamsForPlayers(numPlayers) {
+  if (numPlayers % 2 === 0) {
+    return 2;
+  } else if (numPlayers % 3 === 0) {
+    return 3;
+  }
+  throw "%s Players not supported.".replace("%s", numPlayers);
+}
+
+function assignTeamColor(gameRoom, playerId) {
+  var numPlayers = GAME_LOBBIES.get(gameRoom).numPlayers;
+  var numTeams = getNumberOfTeamsForPlayers(numPlayers);
+  var teamColorNum = playerId % numTeams;
+  var teamColor = COLORS[teamColorNum];
+  console.log('team color is ' + teamColor);
+  return teamColor;
 }
 
 /**
@@ -311,12 +352,25 @@ function reuseDiscardCards(gameRoom) {
   GameState.discardCards = [];
 }
 
+function isDeadCard(gameRoom, card) {
+  var GameState = GAME_LOBBIES.get(gameRoom);
+  for (var deadCard of GameState.deadCards) {
+    if (deadCard === card) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Get a card from top of cards deck
  * @param {str} gameRoom 
  */
 function getCard(gameRoom) {
   var card = GAME_LOBBIES.get(gameRoom).cardDeck.pop();
+  if (isDeadCard(gameRoom, card)) {
+    return getCard(gameRoom);
+  }
   return card;
 }
 
@@ -328,33 +382,43 @@ function getCard(gameRoom) {
  * @param {str} numCards 
  * @param {str} team 
  */
-function createPlayer(gameRoom, id, name, numCards, team) {
+function createPlayer(gameRoom, id, name) {
+  var team = assignTeamColor(gameRoom, id);
+  if (!GAME_LOBBIES.get(gameRoom).teams.get(team)) {
+    GAME_LOBBIES.get(gameRoom).teams.set(team, {
+      sequences: [],
+      players: [id],
+    });
+  }
+  var numCardsPerPerson = getNumberOfCardsForPlayers(GAME_LOBBIES.get(gameRoom).numPlayers);
   var player = {
     id: id,
     name: name,
     team: team,
     cardsInHand: []
   };
-  for (var i = 0; i < numCards; i++) {
+  for (var i = 0; i < numCardsPerPerson; i++) {
     player.cardsInHand.push(getCard(gameRoom));
   }
   GAME_LOBBIES.get(gameRoom).players.set(id, player);
-  return id;
+  return player;
 }
 
 /**
  * Initialize a new game with one player
  */
-function initializeNewGame(playerName) {
+function initializeNewGame(playerName, numPlayers) {
   var gameRoomId = generateRoomCode();
-  var gameState = initializeGameState(gameRoomId);
+  var gameState = initializeGameState(gameRoomId, numPlayers);
   GAME_LOBBIES.set(gameRoomId, gameState);
-  var playerId = createPlayer(gameRoomId, 0, playerName, NUM_CARDS_PER_PLAYER, TeamColor.GREEN);
+  var player = createPlayer(gameRoomId, 0, playerName);
   // add new team
   GAME_LOBBIES.get(gameRoomId).teams.set(TeamColor.GREEN, {
     sequences: [],
-    players: [playerId]
+    players: [player.id]
   });
+  GAME_LOBBIES.get(gameRoomId).playerNames = [];
+  GAME_LOBBIES.get(gameRoomId).playerNames.push(playerName);
   return gameRoomId;
 }
 
@@ -376,8 +440,6 @@ function initializeNewGame(playerName) {
 function getSequenceWithToken(gameRoom, color, tokenX, tokenY) {
   console.log(tokenX + ', ' + tokenY + '\n');
   var GameState = GAME_LOBBIES.get(gameRoom);
-  console.log('board is ')
-  console.log(GameState.board)
   var x1 = tokenX - 9;
   var x2 = tokenX + 9;
   var y1 = tokenY - 9;
@@ -391,8 +453,6 @@ function getSequenceWithToken(gameRoom, color, tokenX, tokenY) {
     }
     var card = GameState.board[i][j];
     var cardColor = card.token;
-    console.log('card is ')
-    console.log(card)
     if (cardColor === color || card.card === 'W') {
       sequenceSoFar.push({ x: i, y: j, card: card.card });
       if (sequenceSoFar.length === SEQUENCE_LENGTH) {
@@ -523,6 +583,47 @@ function addSequenceToTeam(gameRoom, team, sequence) {
   }
 }
 
+function getPositionOfCardInHand(gameRoom, playerId, cardId) {
+  var tokenCard = cardId.substring(0, cardId.length - 1);
+  // check player's cards to see if they can play the token on the card id
+  var cardsInHand = GAME_LOBBIES.get(gameRoom).players.get(playerId).cardsInHand;
+  var wildCard = -1;
+  for (var i = 0; i < cardsInHand.length; i++) {
+    var card = cardsInHand[i];
+    if (card === tokenCard) {
+      return i;
+    } else if (card === 'JD' || card === 'JC') {
+      wildCard = i;
+    }
+  }
+  return wildCard;
+}
+
+function checkDeadCards(gameRoom, card) {
+  var GameState = GAME_LOBBIES.get(gameRoom);
+  // when a new token is placed, check if the card is now 'dead'
+  // and if so check if any players have that 'dead' card and if so, replace it
+  var cardClass = card.substring(0, card.length - 1);
+  var cardPosition1 = CARD_POSITIONS[cardClass + '1'];
+  var cardPosition2 = CARD_POSITIONS[cardClass + '2'];
+  if (GameState.board[cardPosition1.x][cardPosition1.y].token != null && GameState.board[cardPosition2.x][cardPosition2.y].token != null) {
+    // card is dead
+    GameState.deadCards.push(cardClass);
+    // check if any players have the dead card if so remove
+    for (var [id, player] of GameState.players) {
+      console.log('player is')
+      console.log(player)
+      for (var i = 0; i < player.cardsInHand.length; i++) {
+        var card = player.cardsInHand[i];
+        if (card === cardClass) {
+          player.cardsInHand[i] = getCard(gameRoom);
+        }
+      }
+    }
+  }
+
+}
+
 /**
  * Place token on card and check for sequences.
  * Add sequence to team.
@@ -532,10 +633,25 @@ function addSequenceToTeam(gameRoom, team, sequence) {
  */
 function placeTokenOnCard(gameRoom, playerId, card) {
   var GameState = GAME_LOBBIES.get(gameRoom);
-  // get position of card & update card to have player's token on it
+  // check that the player has the card in their hand before placing token
+  var positionCard = getPositionOfCardInHand(gameRoom, playerId, card);
+  console.log(positionCard);
+  if (positionCard === -1) {
+    console.log('player does not have card');
+    throw "Player does not have the card in their hand";
+  }
+  // get position of card on board & update card to have player's token on it
   var position = CARD_POSITIONS[card];
   var colorToken = GameState.players.get(playerId).team;
   GameState.board[position.x][position.y].token = colorToken;
+
+  // check for dead cards
+  checkDeadCards(gameRoom, card);
+
+  // replace card in player's hand
+  GameState.players.get(playerId).cardsInHand[positionCard] = getCard(gameRoom);
+
+  // check for sequences
   var sequences = getSequenceWithToken(gameRoom, colorToken, position.x, position.y);
   if (sequences.length > 0) {
     // set the sequence to part of a sequence
@@ -546,6 +662,59 @@ function placeTokenOnCard(gameRoom, playerId, card) {
       addSequenceToTeam(gameRoom, colorToken, sequence);
     }
   }
+}
+
+function updateNextPlayer(gameRoom) {
+  var game = GAME_LOBBIES.get(gameRoom);
+  var currentPlayer = game.currentPlayer;
+  var length = game.players.size;
+  var nextPlayer = currentPlayer === length - 1 ? 0 : currentPlayer + 1;
+  GAME_LOBBIES.get(gameRoom).currentPlayer = nextPlayer;
+}
+
+function checkIfCardOccupied(gameRoom, playerId, cardId) {
+  var GameState = GAME_LOBBIES.get(gameRoom);
+  var cardPosition = CARD_POSITIONS[cardId];
+  var token = GameState.board[cardPosition.x][cardPosition.y].token;
+  var team = GameState.players.get(playerId).team;
+  console.log('team is ' + team + ' and token is ' + token);
+  var isOccupied = token != null && token != team;
+  return isOccupied;
+}
+
+
+function getOneEyedJack(gameRoom, playerId) {
+  var GameState = GAME_LOBBIES.get(gameRoom);
+  var cards = GameState.players.get(playerId).cardsInHand;
+  for (var i = 0; i < cards.length; i++) {
+    var card = cards[i];
+    if (card === 'JH' || card === 'JS') {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function removeToken(gameRoom, playerId, card) {
+  var positionOneEyeJack = getOneEyedJack(gameRoom, playerId);
+  var isOccupied = checkIfCardOccupied(gameRoom, playerId, card);
+  if (!isOccupied) {
+    var err = 'For gameRoom ' + gameRoom + ', playerId: ' + playerId + ', card ' + card + ' is not occupied or is occupied by the same team';
+    throw err;
+  }
+  if (positionOneEyeJack === -1) {
+    var err = 'Player ' + playerId + ' in game room ' + gameRoom + ' does not have a one eyed jack';
+    throw err;
+  }
+  // get position of card and remove the token on it
+  var position = CARD_POSITIONS[card];
+  console.log('position is ')
+  console.log(position);
+  var GameState = GAME_LOBBIES.get(gameRoom);
+  GameState.board[position.x][position.y].token = null;
+
+  // remove the one eyed jack from the player's hand
+  GameState.players.get(playerId).cardsInHand[positionOneEyeJack] = getCard(gameRoom);
 }
 
 /**
@@ -559,11 +728,46 @@ function placeTokenOnCard(gameRoom, playerId, card) {
 function applyMove(move, gameRoom, playerId, card) {
   console.log('apply move ' + move + ' card ' + card);
   if (move === MoveType.PLACE_TOKEN) {
-    placeTokenOnCard(gameRoom, playerId, card);
+    try {
+      placeTokenOnCard(gameRoom, playerId, card);
+      updateNextPlayer(gameRoom);
+      sendStateUpdate(gameRoom);
+    } catch (err) {
+      console.log(err);
+    }
+  } else if (move === MoveType.REMOVE_TOKEN) {
+    try {
+      removeToken(gameRoom, playerId, card);
+      updateNextPlayer(gameRoom);
+      sendStateUpdate(gameRoom);
+    } catch (err) {
+      console.log(err);
+    }
   }
-  sendStateUpdate(gameRoom);
 }
 
+function addPlayerGameLobby(name, gameRoomId) {
+  console.log('gameRoom is ' + gameRoomId)
+  var gameRoom = GAME_LOBBIES.get(gameRoomId);
+  if (!gameRoom) {
+    throw INVALID_ROOM_CODE_ERROR;
+  }
+  var playerIds = Array.from(gameRoom.players.keys());
+  var lastPlayer = gameRoom.players.get(playerIds[playerIds.length - 1]);
+  var playerId = lastPlayer.id + 1;
+  var numSameName = numElementInArr(name, gameRoom.playerNames);
+  if (numSameName > 0) {
+    throw PLAYER_WITH_SAME_NAME_ERROR.replace("%s", name);
+  }
+  var player = createPlayer(gameRoomId, playerId, name);
+  if (playerIds.length >= gameRoom.numPlayers) {
+    throw MAX_PLAYERS_ERROR;
+  }
+  GAME_LOBBIES.get(gameRoomId).players.set(playerId, player);
+  GAME_LOBBIES.get(gameRoomId).playerNames.push(name);
+  sendStateUpdate(gameRoomId);
+  return playerId;
+}
 
 /****************************************************************************
 * 
@@ -578,13 +782,24 @@ io.on('connection', function(socket) {
   socket.on('createGame', function(msg) {
     console.log('create new game with msg');
     console.log(msg);
-    var gameRoomId = initializeNewGame(msg.name);
+    var gameRoomId = initializeNewGame(msg.name, msg.numPlayers);
     io.to(socket.id).emit('createGameSuccess', gameRoomId);
     sendStateUpdate(gameRoomId)
   });
-  socket.on('message', function(msg) {
-    console.log('msg us ')
+  socket.on('joinGame', function(msg) {
+    console.log('player ' + msg.name + ' trying to join room ' + msg.room);
+    console.log('join game')
     console.log(msg)
+    // try {
+      var playerId = addPlayerGameLobby(msg.name, msg.room);
+      // add socket to game lobby
+      io.to(socket.id).emit(msg.room, { joinGameSuccess: true, playerId: playerId });
+      sendStateUpdate(msg.room);
+    // } catch (err) {
+    //   // console.log('join game failure ' + err);
+    //   io.to(socket.id).emit('joinGameFailure', err);
+    // }
+
   });
 
   socket.on('move', function(params) {
@@ -595,6 +810,8 @@ io.on('connection', function(socket) {
 function sendStateUpdate(gameRoomId) {
   var gameRoom = GAME_LOBBIES.get(gameRoomId);
   if (gameRoom) {
+    // console.log('game room is ')
+    // console.log(gameRoom)
     // transform map to string  to send
     var players = new Map(gameRoom.players);
     var teams = new Map(gameRoom.teams);
