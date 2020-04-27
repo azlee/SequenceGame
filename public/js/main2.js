@@ -881,14 +881,18 @@ function applyMove(move, card, i) {
     // can only place token if it's the player's turn and if they have the card in their hand
     // and if the card is not occupied by another token
      var isOccupied = checkIfCardOccupied(card);
+     var cardPosition = CARD_POSITIONS[card];
      if (isOccupied) { // player is trying to remove a token
       // check that player has a one eyed jack
       var oneEyedJackPosition = getOneEyedJack();
       if (oneEyedJackPosition === -1) { return; }
+      // if card is part of sequence then invalid move
+      if (GameState.board[cardPosition.x][cardPosition.y].partOfSequence) {
+        return;
+      }
       move = MoveType.REMOVE_TOKEN;
       socketEmit = true;
      } else if (checkIfPlayerHasCard(card)) {
-      var cardPosition = CARD_POSITIONS[card];
       if (!GameState.board[cardPosition.x][cardPosition.y].token) {
         socketEmit = true;
         var cardType = card.substring(0, card.length - 1);

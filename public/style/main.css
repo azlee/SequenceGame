@@ -163,7 +163,7 @@ html, body {
 .modal-content button {
     font-weight: bold;
     letter-spacing: .05rem;
-    background-color: #bbdddd;
+    background-color: #d9d9d9;
     border-radius: .4rem;
     margin: .75rem .75rem 1.2rem;
     padding: 1rem 1.3rem;
@@ -177,7 +177,7 @@ html, body {
 }
 
 .modal-content button:hover {
-    background-color: #99cccc;
+    background-color: #bfbfbf;
 }
 
 .winner-modal {

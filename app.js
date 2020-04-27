@@ -587,10 +587,16 @@ function addSequenceToTeam(gameRoom, team, sequence) {
       console.log(sequence);
       GameState.numSequences++;
       teamSequences.push(sequence);
+      for (var pos of sequence.positions) {
+        GameState.board[pos.x][pos.y].partOfSequence = true;
+      }
     }
   }
   if (teamSequences.length === 0) {
     teamSequences.push(sequence);
+    for (var pos of sequence.positions) {
+      GameState.board[pos.x][pos.y].partOfSequence = true;
+    }
     GameState.numSequences++;
   }
 }
@@ -742,6 +748,7 @@ function getOneEyedJack(gameRoom, playerId) {
  * @param {*} card 
  */
 function removeToken(gameRoom, playerId, card) {
+  var GameState = GAME_LOBBIES.get(gameRoom);
   var positionOneEyeJack = getOneEyedJack(gameRoom, playerId);
   var isOccupied = checkIfCardOccupied(gameRoom, playerId, card);
   if (!isOccupied) {
@@ -754,9 +761,10 @@ function removeToken(gameRoom, playerId, card) {
   }
   // get position of card and remove the token on it
   var position = CARD_POSITIONS[card];
-  console.log('position is ')
-  console.log(position);
-  var GameState = GAME_LOBBIES.get(gameRoom);
+  var isPartOfSequence = GameState.board[position.x][position.y].partOfSequence;
+  if (isPartOfSequence) {
+    var err = 'Token is part of sequence';
+  }
   GameState.board[position.x][position.y].token = null;
 
   // check if in dead cards - if so, remove it
