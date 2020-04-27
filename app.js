@@ -116,6 +116,9 @@ function numElementInArr(element, arr) {
 /* Map of all the game lobbies - key is room code and value is the lobby itself */
 var GAME_LOBBIES = new Map();
 
+/* Map of all the connected sockets */
+var SOCKETS_MAP = new Map();
+
 var BOARD_WIDTH = 10;
 
 var TeamColor = {
@@ -136,18 +139,8 @@ var SequenceType = {
 var SEQUENCE_LENGTH = 5;
 
 var CARDS_IN_DECK = ['JC', 'JC', 'JD', 'JD', 'JH', 'JH', 'JS', 'JS', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', '6S', '5C', '4C', '3C', '2C', 'AH', 'KH', 'QH', '10H', '10S', '7C', 'AS', '2D', '3D', '4D', '5D', '6D', '7D', '9H', 'QS', '8C', 'KS', '6C', '5C', '4C', '3C', '2C', '8D', '8H', 'KS', '9C', 'QS', '7C', '6H', '5H', '4H', 'AH', '9D', '7H', 'AS', '10C', '10S', '8C', '7H', '2H', '3H', 'KH', '10D', '6H', '2D', 'QC', '9S', '9C', '8H', '9H', '10H', 'QH', 'QD', '5H', '2D', 'KC', '8S', '10C', 'QC', 'KC', 'AC', 'AD', 'KD', '4H', '4D', 'AC', '7S', '6S', '5S', '4S', '3S', '2S', '2H', '3H', '5D', 'AD', 'KD', 'QD', '10D', '9D', '8D', '7D', '6D'];
-// var CARDS_BOARD_ARRAY = [['W', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', 'W'], 
-//                          ['6S', '5C', '4C', '3C', '2C', 'AH', 'KH', 'QH', '10H', '10S'], 
-//                          ['7C', 'AS', '2D', '3D', '4D', '5D', '6D', '7D', '9H', 'QS'], 
-//                          ['8C', 'KS', '6C', '5C', '4C', '3C', '2C', '8D', '8H', 'KS'], 
-//                          ['9C', 'QS', '7C', '6H', '5H', '4H', 'AH', '9D', '7H', 'AS'], 
-//                          ['10C', '10S', '8C', '7H', '2H', '3H', 'KH', '10D', '6H', '2D'], 
-//                          ['QC', '9S', '9C', '8H', '9H', '10H', 'QH', 'QD', '5H', '3D'], 
-//                          ['KC', '8S', '10C', 'QC', 'KC', 'AC', 'AD', 'KD', '4H', '4D'], 
-//                          ['AC', '7S', '6S', '5S', '4S', '3S', '2S', '2H', '3H', '5D'], 
-//                          ['W', 'AD', 'KD', 'QD', '10D', '9D', '8D', '7D', '6D', 'W']];
 var CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', '9S1', 'W'], 
-                         ['6S1', '5C1', '4C1', '3C1', '2C1', 'AH1', 'KH1', 'QH1', '10H1', '10S1'], 
+                         ['6C1', '5C1', '4C1', '3C1', '2C1', 'AH1', 'KH1', 'QH1', '10H1', '10S1'], 
                          ['7C1', 'AS1', '2D1', '3D1', '4D1', '5D1', '6D1', '7D1', '9H1', 'QS1'], 
                          ['8C1', 'KS1', '6C2', '5C2', '4C2', '3C2', '2C2', '8D1', '8H1', 'KS2'], 
                          ['9C1', 'QS2', '7C2', '6H1', '5H1', '4H1', 'AH2', '9D1', '7H1', 'AS2'], 
@@ -319,6 +312,7 @@ function initializeGameState(gameRoomId, numPlayers) {
     numCardsPerPerson: getNumberOfCardsForPlayers(numPlayers),
     numPlayers: numPlayers,
     numTeams: numTeams,
+    numSequences: 0,
     numSequencesForWin: numSequencesForWin,
     players: new Map(),
     teams: new Map(), // key will be RED, GREEN or BLUE 
@@ -410,7 +404,7 @@ function createPlayer(gameRoom, id, name) {
 /**
  * Initialize a new game with one player
  */
-function initializeNewGame(playerName, numPlayers) {
+function initializeNewGame(playerName, numPlayers, socketId) {
   var gameRoomId = generateRoomCode();
   var gameState = initializeGameState(gameRoomId, numPlayers);
   GAME_LOBBIES.set(gameRoomId, gameState);
@@ -420,6 +414,8 @@ function initializeNewGame(playerName, numPlayers) {
     sequences: [],
     players: [player.id]
   });
+  // add socket id, player to game lobby
+  addPlayerSocketIdToGameLobby(socketId, gameRoomId, player.id);
   GAME_LOBBIES.get(gameRoomId).playerNames = [];
   GAME_LOBBIES.get(gameRoomId).playerNames.push(playerName);
   return gameRoomId;
@@ -552,6 +548,11 @@ function isSequenceEqual(sequence1, sequence2) {
   return true;
 }
 
+/**
+ * Check for overlap between two sequences
+ * @param {*} sequence1 
+ * @param {*} sequence2 
+ */
 function checkOverlap(sequence1, sequence2) {
   for (var i = 0; i < SEQUENCE_LENGTH; i++) {
     for (var j = 0; j < SEQUENCE_LENGTH; j++) {
@@ -565,6 +566,12 @@ function checkOverlap(sequence1, sequence2) {
   return false;
 }
 
+/**
+ * Add sequence to the team's sequences
+ * @param {*} gameRoom 
+ * @param {*} team 
+ * @param {*} sequence 
+ */
 function addSequenceToTeam(gameRoom, team, sequence) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   var teamSequences = GameState.teams.get(team).sequences;
@@ -578,14 +585,24 @@ function addSequenceToTeam(gameRoom, team, sequence) {
       }
       console.log('pushing sequence')
       console.log(sequence);
+      GameState.numSequences++;
       teamSequences.push(sequence);
     }
   }
   if (teamSequences.length === 0) {
     teamSequences.push(sequence);
+    GameState.numSequences++;
   }
 }
 
+/**
+ * Get position of card in the player's hand
+ * If they don't have the card but a two eyed jack then return that
+ * Else return -1
+ * @param {*} gameRoom 
+ * @param {*} playerId 
+ * @param {*} cardId 
+ */
 function getPositionOfCardInHand(gameRoom, playerId, cardId) {
   var tokenCard = cardId.substring(0, cardId.length - 1);
   // check player's cards to see if they can play the token on the card id
@@ -602,6 +619,11 @@ function getPositionOfCardInHand(gameRoom, playerId, cardId) {
   return wildCard;
 }
 
+/**
+ * Check for dead cards in the board. If any player has dead cards then replace
+ * @param {*} gameRoom 
+ * @param {*} card 
+ */
 function checkDeadCards(gameRoom, card) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   // when a new token is placed, check if the card is now 'dead'
@@ -667,14 +689,24 @@ function placeTokenOnCard(gameRoom, playerId, card) {
   }
 }
 
+/**
+ * Update the next player's turn
+ * @param {*} gameRoom 
+ */
 function updateNextPlayer(gameRoom) {
   var game = GAME_LOBBIES.get(gameRoom);
   var currentPlayer = game.currentPlayer;
   var length = game.players.size;
-  var nextPlayer = currentPlayer === length - 1 ? 0 : currentPlayer + 1;
+  var nextPlayer = currentPlayer >= length - 1 ? 0 : currentPlayer + 1;
   GAME_LOBBIES.get(gameRoom).currentPlayer = nextPlayer;
 }
 
+/**
+ * Check if the card is occupied by a different team's token
+ * @param {*} gameRoom 
+ * @param {*} playerId 
+ * @param {*} cardId 
+ */
 function checkIfCardOccupied(gameRoom, playerId, cardId) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   var cardPosition = CARD_POSITIONS[cardId];
@@ -685,7 +717,12 @@ function checkIfCardOccupied(gameRoom, playerId, cardId) {
   return isOccupied;
 }
 
-
+/**
+ * Get first position of one eyed jack in player's hand
+ * If they don't have one then return -1
+ * @param {*} gameRoom 
+ * @param {*} playerId 
+ */
 function getOneEyedJack(gameRoom, playerId) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   var cards = GameState.players.get(playerId).cardsInHand;
@@ -698,6 +735,12 @@ function getOneEyedJack(gameRoom, playerId) {
   return -1;
 }
 
+/**
+ * Remove token from board
+ * @param {*} gameRoom 
+ * @param {*} playerId 
+ * @param {*} card 
+ */
 function removeToken(gameRoom, playerId, card) {
   var positionOneEyeJack = getOneEyedJack(gameRoom, playerId);
   var isOccupied = checkIfCardOccupied(gameRoom, playerId, card);
@@ -715,6 +758,13 @@ function removeToken(gameRoom, playerId, card) {
   console.log(position);
   var GameState = GAME_LOBBIES.get(gameRoom);
   GameState.board[position.x][position.y].token = null;
+
+  // check if in dead cards - if so, remove it
+  for (var i = 0; i < GameState.deadCards.length; i++) {
+    if (GameState.deadCards[i] === card.substring(0, card.length - 1)) {
+      GameState.deadCards.splice(i, 1);
+    }
+  }
 
   // remove the one eyed jack from the player's hand
   GameState.players.get(playerId).cardsInHand[positionOneEyeJack] = getCard(gameRoom);
@@ -749,6 +799,11 @@ function applyMove(move, gameRoom, playerId, card) {
   }
 }
 
+/**
+ * Create new player and add to game lobby
+ * @param {*} name 
+ * @param {*} gameRoomId 
+ */
 function addPlayerGameLobby(name, gameRoomId) {
   console.log('gameRoom is ' + gameRoomId)
   var gameRoom = GAME_LOBBIES.get(gameRoomId);
@@ -772,20 +827,88 @@ function addPlayerGameLobby(name, gameRoomId) {
   return playerId;
 }
 
+/**
+ * Remove player from game
+ * @param {*} gameRoomId 
+ * @param {*} playerId 
+ */
+function removePlayerFromGame(gameRoomId, playerId) {
+  var gameRoom = GAME_LOBBIES.get(gameRoomId);
+  if (!gameRoom || gameRoom.players.size === 0) { return; }
+  var player = gameRoom.players.get(playerId);
+  if (!player) { return; }
+  // transfer player's cards to card decks
+  gameRoom.cardDeck = gameRoom.cardDeck.concat(player.cardsInHand);
+  // remove player from names
+  for (var i = 0; i < gameRoom.teams.get(player.team).players.length; i++) {
+    var teamPlayer = gameRoom.teams.get(player.team).players[i]
+    if (teamPlayer === playerId) {
+      // delete player
+      gameRoom.teams.get(player.team).players.splice(i, 1);
+    }
+  }
+  console.log(GAME_LOBBIES.get(gameRoomId).teams.get(player.team));
+  // delete player from game
+  gameRoom.players.delete(playerId);
+  // delete player from teams
+  var playerNames = gameRoom.playerNames;
+  playerNames.splice(playerNames.indexOf(player.name), 1);
+
+  // delete team if player was only one in it
+  if (gameRoom.teams.get(player.team).players.length === 0) {
+    gameRoom.teams.delete(player.team);
+  }
+
+  // update current player 
+  if (gameRoom.currentPlayer === playerId) {
+    updateNextPlayer(gameRoomId);
+  }
+
+  // of no more players then delete the game room
+  if (gameRoom.players.size === 0) {
+    GAME_LOBBIES.delete(gameRoomId);
+  }
+}
+
 /****************************************************************************
 * 
 * Sockets
 * 
 ****************************************************************************/
 
+/**
+ * Add a socketId, playerId, game room code key value pair to game lobby
+ * We need this so we can remove players from their game room when socket disconnects
+ * @param {str} socketId 
+ * @param {str} gameRoomId 
+ * @param {str} playerId 
+ */
+function addPlayerSocketIdToGameLobby(socketId, gameRoomId, playerId) {
+  SOCKETS_MAP.set(socketId, { playerId: playerId, gameRoomId: gameRoomId });
+}
+
+
 io.on('connection', function(socket) {
   console.log('\n');
   console.log('new connection ' + socket.id);
 
+  socket.on('disconnect', function() {
+    // on disconnect, remove the player from the game
+    // and send notification to other players that player has left
+    var gamePlayer = SOCKETS_MAP.get(socket.id);
+    if (gamePlayer) {
+      // remove player from game
+      console.log('Player in gameRoom ' + gamePlayer.gameRoomId + ' and id ' + gamePlayer.playerId + ' is leaving game');
+      removePlayerFromGame(gamePlayer.gameRoomId, gamePlayer.playerId);
+      SOCKETS_MAP.delete(socket.id);
+      sendStateUpdate(gamePlayer.gameRoomId);
+    }
+  })
+
   socket.on('createGame', function(msg) {
     console.log('create new game with msg');
     console.log(msg);
-    var gameRoomId = initializeNewGame(msg.name, msg.numPlayers);
+    var gameRoomId = initializeNewGame(msg.name, msg.numPlayers, socket.id);
     io.to(socket.id).emit('createGameSuccess', gameRoomId);
     sendStateUpdate(gameRoomId)
   });
@@ -795,6 +918,8 @@ io.on('connection', function(socket) {
     console.log(msg)
     // try {
       var playerId = addPlayerGameLobby(msg.name, msg.room);
+      // add socket to game lobby
+      addPlayerSocketIdToGameLobby(socket.id, msg.room, playerId);
       // add socket to game lobby
       io.to(socket.id).emit(msg.room, { joinGameSuccess: true, playerId: playerId });
       sendStateUpdate(msg.room);
@@ -812,6 +937,10 @@ io.on('connection', function(socket) {
 
 function sendStateUpdate(gameRoomId) {
   var gameRoom = GAME_LOBBIES.get(gameRoomId);
+  console.log('GAME_LOBBIES is ')
+  console.log(GAME_LOBBIES)
+  console.log('sockets is ')
+  console.log(SOCKETS_MAP)
   if (gameRoom) {
     // console.log('game room is ')
     // console.log(gameRoom)

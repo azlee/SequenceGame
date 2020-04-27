@@ -44,7 +44,8 @@ var ModalType = {
   GAME_LOBBY: "GAME LOBBY",
   CREATE_NEW_GAME_FORM: "CREATE NEW GAME FORM",
   JOIN_NEW_GAME: "JOIN NEW GAME",
-  DISPLAY_WINNER: "DISPLAY WINNER"
+  DISPLAY_WINNER: "DISPLAY WINNER",
+  PLAYER_LEFT: "PLAYER LEFT"
 }
 
 var NUMBER_OF_PLAYERS = [2, 3, 4, 6, 8, 9, 12];
@@ -199,12 +200,9 @@ console.log(socket)
  * @param {str} name - name of first player
  */
 function createGame(name, numPlayers) {
-    console.log('creating game with num players..' + numPlayers)
     socket.emit('createGame', { name: name.trim(), numPlayers: numPlayers });
-    console.log('emiting socket game..')
     playerId = 0;
     socket.on('createGameSuccess', function(gameRoom) {
-      console.log('game was created successfully')
       var modal = document.getElementById('myModal');
       modal.style.display = "none";
       listenToRoomNotifications(gameRoom);
@@ -219,13 +217,11 @@ function createGame(name, numPlayers) {
 * @param {str} roomCode 
 */
 function joinGame(name, roomCode) {
-  console.log('joining game..')
   roomCode = roomCode.trim().toUpperCase();;
   socket.emit('joinGame', { name: name, room: roomCode });
   listenToRoomNotifications(roomCode)
 
   socket.on('joinGameFailure', function(errorMsg) {
-      console.log('join game failure')
       var errorDiv = document.getElementById('formPlaceholder');
       errorDiv.innerHTML = errorMsg;
   })
@@ -233,20 +229,14 @@ function joinGame(name, roomCode) {
 
 
 function listenToRoomNotifications(roomCode) {
-  console.log('roomCode is ' + roomCode);
   socket.on(roomCode, function(msg) {
-    console.log('msg is ')
-    console.log(msg)
     if (msg.state) {
-      // console.log('update state to ')
-      // console.log(msg.state)
       var prevGameState = Object.assign({}, GameState);
       GameState = msg.state;
       GameState.players = new Map(JSON.parse(msg.state.players));
       GameState.teams = new Map(JSON.parse(msg.state.teams));
       renderBoard(prevGameState);
-    }
-    if (msg.joinGameSuccess) {
+    } if (msg.joinGameSuccess) {
         playerId = msg.playerId;
         var modal = document.getElementById('myModal');
         modal.style.display = "none";
@@ -276,18 +266,13 @@ window.onload = function () {
  */
 function renderBoard(prevGameState) {
   if (playerId === undefined) {
-    console.log('no')
     return;
   }
   if (prevGameState === undefined || Object.keys(prevGameState).length === 0) {
-    console.log('ya')
     renderCardsInHand();
     renderHeader();
     return;
   }
-
-  console.log('prev state is ')
-  console.log(prevGameState)
   var prevNumSequences = 0; 
   var cardsInHandChanged = prevGameState.players.get(playerId).cardsInHand != GameState.players.get(playerId).cardsInHand;
   var boardChanged = prevGameState.board != GameState.board;
@@ -318,13 +303,17 @@ function renderBoard(prevGameState) {
     renderTokens(prevGameState.board);
   }
   renderHighlightedCards();
+  // check if any players left
+  if (prevGameState.players.size > GameState.players.size) {
+    var difference = Array.from(prevGameState.players.keys()).filter(x => !Array.from(GameState.players.keys()).includes(x));
+    renderModal(ModalType.PLAYER_LEFT, prevGameState.players.get(difference[0]).name);
+  }
 }
 
 /**
  * Render the player's cards
  */
 function renderCardsInHand(prevCards) {
-  console.log('render cards in hand')
   var cardsDiv = document.getElementById("cards-in-hand");
   // TODO: only render the new playing card after player places a token
   var i = 0;
@@ -349,53 +338,50 @@ function renderCardsInHand(prevCards) {
   }
 }
 
-function putBorderAroundSequence(sequence, teamColor) {
-  console.log('sequence is ')
-  console.log(sequence)
-  var teamColor = TeamBorderColor[teamColor];
+function putBorderAroundSequence(sequence) {
+  var borderColor = 'rgba(0, 0, 0, .9)';
   if (sequence.type === SequenceType.HORIZONTAL) {
     var cards = sequence.positions;
-    console.log(cards)
     // set left, top & bottom border for 1st element
     var leftCard = document.getElementById(cards[0].card);
     if (leftCard) {
-      leftCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
-      leftCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
+      leftCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      leftCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
     }
     for (var i = 1; i <= 3; i++) {
       var middleCard = document.getElementById(cards[i].card);
-      middleCard.style.boxShadow = 'inset 0 .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
-      middleCard.style.webkitBoxShadow = 'inset 0 .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
+      middleCard.style.boxShadow = 'inset 0 .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      middleCard.style.webkitBoxShadow = 'inset 0 .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
     }
     var rightCard = document.getElementById(cards[4].card);
     if (rightCard) {
-      rightCard.style.boxShadow = 'inset -.4rem .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
-      rightCard.style.webkitBoxShadow = 'inset -.4rem .4rem .3rem ' + teamColor + ',inset 0 -.4rem .3rem ' + teamColor
+      rightCard.style.boxShadow = 'inset -.4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      rightCard.style.webkitBoxShadow = 'inset -.4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
     }
   } else if (sequence.type === SequenceType.VERTICAL) {
     var cards = sequence.positions;
     var topCard = document.getElementById(cards[0].card);
     if (topCard) {
-      topCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
-      topCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
+      topCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      topCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
     }
     for (var i = 1; i <= 3; i++) {
       var middleCard = document.getElementById(cards[i].card);
-      middleCard.style.boxShadow = 'inset .4rem 0 .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
-      middleCard.style.webkitBoxShadow = 'inset .4rem 0 .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
+      middleCard.style.boxShadow = 'inset .4rem 0 .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      middleCard.style.webkitBoxShadow = 'inset .4rem 0 .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
     }
     var bottomCard = document.getElementById(cards[4].card);
     if (bottomCard) {
-      bottomCard.style.boxShadow = 'inset .4rem -.4rem .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
-      bottomCard.style.webkitBoxShadow = 'inset .4rem -.4rem .3rem ' + teamColor + ',inset -.4rem 0 .3rem ' + teamColor
+      bottomCard.style.boxShadow = 'inset .4rem -.4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      bottomCard.style.webkitBoxShadow = 'inset .4rem -.4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
     }
   } else { // diagonal sequence - put border on all sides
     for (var i = 0; i <= 4; i++) {
       var cards = sequence.positions;
       var card = document.getElementById(cards[i].card);
       if (card) {
-        card.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
-        card.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
+        card.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ', inset -.4rem -.4rem .3rem ' + borderColor;
+        card.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ', inset -.4rem -.4rem .3rem ' + borderColor;
       }
     }
   }
@@ -403,7 +389,6 @@ function putBorderAroundSequence(sequence, teamColor) {
 
 //TODO only re render tokens that have changed!!
 function renderTokens(prevBoard) {
-  console.log('render tokens');
   for (var i = 0; i < 10; i++) {
     for (var j = 0; j < 10; j++) {
       var card = GameState.board[i][j];
@@ -423,7 +408,6 @@ function renderTokens(prevBoard) {
 }
 
 function renderHeader() {
-  console.log('render header')
   var header = document.getElementById('header');
   if (header === null) {
     header = document.createElement('div');
@@ -468,10 +452,9 @@ function renderSequences() {
   for (var color in Team) {
     if (GameState.teams.get(color)) {
       for (var sequence of GameState.teams.get(color).sequences) {
-        console.log('render sequence');
         numSequences++;
         // get the ids of each sequence and set border around it
-        putBorderAroundSequence(sequence, color);
+        putBorderAroundSequence(sequence);
         if (numSequences === GameState.numSequencesForWin) {
           renderModal(ModalType.DISPLAY_WINNER, color);
         }
@@ -567,7 +550,6 @@ function addEventListenersToCardsInBoard() {
       }, false);
     }
   }
-  console.log('nodeNum is ' + nodeNum)
 }
 
 function placeTokenOnBoard(card, tokenColor) {
@@ -579,14 +561,12 @@ function placeTokenOnBoard(card, tokenColor) {
 
 function checkIfPlayerHasCard(cardId) {
   var tokenCard = cardId.substring(0, cardId.length - 1);
-  console.log(tokenCard);
   // check player's cards to see if they can play the token on the card id
   for (var card of GameState.players.get(playerId).cardsInHand) {
     if (card === tokenCard || card === 'JD' || card === 'JC') {
       return true;
     }
   }
-  console.log('player does not have ' + tokenCard);
   return false;
 }
 
@@ -625,7 +605,6 @@ function addDisableEnableButton() {
  * @param {boolean} newGame - true if we are creating new game. false if joining existing game
  */
 function createPlayForm(newGame) {
-  console.log('create play form')
   var formDiv = document.createElement('form');
   var nameLabel = document.createElement('label');
   nameLabel.innerHTML = 'Name: ';
@@ -648,7 +627,6 @@ function createPlayForm(newGame) {
     numPlayersSelect.id = 'numPlayers';
     for (var numPlayers of NUMBER_OF_PLAYERS) {
       var option = document.createElement('option');
-      console.log(numPlayers)
       option.value = numPlayers;
       option.innerHTML = numPlayers;
       numPlayersSelect.appendChild(option);
@@ -756,7 +734,6 @@ function renderToggle() {
   var checkbox = document.getElementById("checkbox");
   checkbox.checked = false;
   checkbox.addEventListener( 'change', function() {
-    console.log('toggle clicked');
     togglePlayingCards();
   }, false);
 }
@@ -815,6 +792,12 @@ function renderModal(modalType, winningTeam) {
     modalContent.innerHTML += modalHeader;
     modalContent.appendChild(winnersList);
     modalContent.appendChild(createWinnerModal(winningTeam));
+  } else if (modalType === ModalType.PLAYER_LEFT) {
+    modalContent.innerHTML + '';
+    var modalHeader = '<h4 style="font-size:1.5rem;font-weight:bold;center;letter-spacing:-1px">';
+    modalHeader += "Player " + winningTeam + " left";
+    modalHeader += "</h4>";
+    modalContent.innerHTML += modalHeader;
   }
   if (modalType === ModalType.JOIN_NEW_GAME || modalType === ModalType.GAME_LOBBY || modalType === ModalType.CREATE_NEW_GAME_FORM) {
       modal.style.display = "block";
@@ -889,7 +872,10 @@ function applyMove(move, card, i) {
     }
     renderHighlightedCards();
   } else if (move === MoveType.PLACE_TOKEN) {
-    if (GameState.currentPlayer !== playerId) {
+    if (GameState.currentPlayer !== playerId || (GameState.players.size < GameState.numPlayers)) {
+      return;
+    }
+    if (GameState.numSequencesForWin === GameState.numSequences) {
       return;
     }
     // can only place token if it's the player's turn and if they have the card in their hand
