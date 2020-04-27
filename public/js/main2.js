@@ -448,8 +448,8 @@ function renderHeader() {
 
 // TODO: only render new sequences
 function renderSequences() {
-  var numSequences = 0;
   for (var color in Team) {
+    var numSequences = 0;
     if (GameState.teams.get(color)) {
       for (var sequence of GameState.teams.get(color).sequences) {
         numSequences++;
@@ -875,9 +875,10 @@ function applyMove(move, card, i) {
     if (GameState.currentPlayer !== playerId || (GameState.players.size < GameState.numPlayers)) {
       return;
     }
-    if (GameState.numSequencesForWin === GameState.numSequences) {
-      return;
-    }
+    // TODO: FIX this so it checks num sequences per team
+    // if (GameState.numSequencesForWin === GameState.numSequences) {
+    //   return;
+    // }
     // can only place token if it's the player's turn and if they have the card in their hand
     // and if the card is not occupied by another token
      var isOccupied = checkIfCardOccupied(card);
