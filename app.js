@@ -924,17 +924,17 @@ io.on('connection', function(socket) {
     console.log('player ' + msg.name + ' trying to join room ' + msg.room);
     console.log('join game')
     console.log(msg)
-    // try {
+    try {
       var playerId = addPlayerGameLobby(msg.name, msg.room);
       // add socket to game lobby
       addPlayerSocketIdToGameLobby(socket.id, msg.room, playerId);
       // add socket to game lobby
       io.to(socket.id).emit(msg.room, { joinGameSuccess: true, playerId: playerId });
       sendStateUpdate(msg.room);
-    // } catch (err) {
-    //   // console.log('join game failure ' + err);
-    //   io.to(socket.id).emit('joinGameFailure', err);
-    // }
+    } catch (err) {
+      // console.log('join game failure ' + err);
+      io.to(socket.id).emit('joinGameFailure', err);
+    }
 
   });
 
