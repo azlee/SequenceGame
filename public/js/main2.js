@@ -512,6 +512,14 @@ function addDropShadowToPlayingCard(card) {
 
 function addDropShadowFilterToCardInBoard(card, teamColor) {
   if (card === null) { return; }
+  var cardPos = CARD_POSITIONS[card.id];
+  // don't highlight cards that already have tokens on them
+  if (GameState.board[cardPos.x][cardPos.y].token != null) {
+    return removeDropShadowFilter(card);
+  }
+  card.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
+  card.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
+
   var filter = "drop-shadow(.5rem .5rem .5rem " + "gray" + ") drop-shadow(-.5rem -.5rem .5rem " + "gray" + ")";
   card.style.filter = filter;
   card.style.webkitFilter = filter;
@@ -519,21 +527,10 @@ function addDropShadowFilterToCardInBoard(card, teamColor) {
 
 function removeDropShadowFilter(card) {
   if (card === null) { return; }
+  card.style.boxShadow = "";
+  card.style.webkitBoxShadow = "";
   card.style.filter = "";
   card.style.webkitFilter = "";
-}
-
-function addDropShadowToCardInBoard(card) {
-  var card1 = document.getElementById(card + '1');
-  var card2 = document.getElementById(card + '2');
-  var teamColor = TeamBorderColor[Team[GameState.players.get(playerId).team]];  
-  if (!card1.style.filter) {
-    addDropShadowFilterToCardInBoard(card1, teamColor);
-    addDropShadowFilterToCardInBoard(card2, teamColor);
-  } else {
-    removeDropShadowFilter(card1);
-    removeDropShadowFilter(card2);
-  }
 }
 
 function addEventListenersToCardsInBoard() {
@@ -901,8 +898,12 @@ function applyMove(move, card, i) {
         var card2 = document.getElementById(cardType + '2');
         card1.style.filter = "";
         card1.style.webkitFilter = "";
+        card1.style.boxShadow = "";
+        card1.style.webkitBoxShadow = "";
         card2.style.filter = "";
         card2.style.webkitFilter = "";
+        card2.style.boxShadow = "";
+        card2.style.webkitBoxShadow = "";
       }
     }
   }
