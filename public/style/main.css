@@ -18,9 +18,25 @@ html, body {
   justify-content: space-between;
 }
 
+#roomCode {
+  border: 1px dashed #fff;
+  padding: .25rem;
+  font-size: 0.9rem;
+}
+
 #teams {
   padding-right: 2rem;
   text-align: left;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+span.dot {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  border: .07rem dashed #fff;
+  display: inline-block;
 }
 
 .card-board {

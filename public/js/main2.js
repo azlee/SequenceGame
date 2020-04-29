@@ -423,22 +423,21 @@ function renderHeader() {
   turn.style.borderColor = TeamBorderColor[team];
   var currentPlayerTeam = GameState.players.get(GameState.currentPlayer).team;
   var numPlayersWaiting = GameState.numPlayers - GameState.players.size;
-  if (numPlayersWaiting <= 0) {
-    turn.style.color = TeamBorderColor[currentPlayerTeam];
-  }
-  var currentPlayer = GameState.currentPlayer === playerId ? 'Your turn' : "%s's turn".replace("%s", GameState.players.get(GameState.currentPlayer).name);
+  var dotDiv = '<span class="dot" style="background-color:' + TeamBorderColor[currentPlayerTeam] + ';"></span>';
+  var currentPlayer = GameState.currentPlayer === playerId ? ' Your turn' : " %s's turn".replace("%s", GameState.players.get(GameState.currentPlayer).name);
+  currentPlayer = dotDiv + currentPlayer;
   turn.innerHTML = numPlayersWaiting > 0 ? "Waiting for %s players to join...".replace("%s", numPlayersWaiting) : currentPlayer;
   var teams = document.createElement('div');
   teams.id = 'teams';
   for (var team of GameState.teams.keys()) {
     var teamPlayers = GameState.teams.get(team).players;
-    var teamText = team + ': ' + GameState.players.get(teamPlayers[0]).name;
+    var teamText = '<span class="dot" style="background-color:' + TeamBorderColor[team] + '"></span>';
+    teamText += ' ' + GameState.players.get(teamPlayers[0]).name;
     for (var i = 1; i < teamPlayers.length; i++) {
       teamText += ', ';
       teamText += GameState.players.get(teamPlayers[i]).name;
     }
     var teamColor = document.createElement('span');
-    teamColor.style.color = TeamBorderColor[team];
     teamColor.innerHTML = teamText;
     teams.appendChild(teamColor);
     teams.appendChild(document.createElement('br'));
