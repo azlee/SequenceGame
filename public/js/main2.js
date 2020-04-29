@@ -35,9 +35,9 @@ const ColorChip = {
 }
 
 const TeamBorderColor = {
-  BLUE: "rgb(0, 184, 230)",
-  GREEN: "rgb(51, 204, 51)",
-  RED: "rgb(255, 71, 26)",
+  BLUE: "rgb(20, 117, 235)",
+  GREEN: "rgb(46, 184, 129)",
+  RED: "rgb(222, 36, 33)",
 }
 
 const ModalType = {
@@ -420,7 +420,6 @@ function renderHeader() {
   header.appendChild(roomCode);
   var turn = document.createElement('div');
   turn.id = "turn";
-  turn.style.borderColor = TeamBorderColor[team];
   var currentPlayerTeam = GameState.players.get(GameState.currentPlayer).team;
   var numPlayersWaiting = GameState.numPlayers - GameState.players.size;
   var dotDiv = '<span class="dot" style="background-color:' + TeamBorderColor[currentPlayerTeam] + ';"></span>';
@@ -442,6 +441,7 @@ function renderHeader() {
     teams.appendChild(teamColor);
     teams.appendChild(document.createElement('br'));
   }
+  turn.style.borderColor = TeamBorderColor[currentPlayerTeam];
   header.appendChild(turn);
   header.appendChild(teams);
   document.body.appendChild(header);
