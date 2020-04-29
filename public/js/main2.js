@@ -296,13 +296,13 @@ function renderBoard(prevGameState) {
   if (cardsInHandChanged) {
     renderCardsInHand(prevGameState.players.get(playerId).cardsInHand);
   }
-  if (sequencesChanged) {
-    renderSequences();
-  }
   if (boardChanged) {
     renderTokens(prevGameState.board);
   }
   renderHighlightedCards();
+  if (sequencesChanged) {
+    renderSequences();
+  }
   // check if any players left
   if (prevGameState.players.size > GameState.players.size) {
     var difference = Array.from(prevGameState.players.keys()).filter(x => !Array.from(GameState.players.keys()).includes(x));
@@ -441,7 +441,9 @@ function renderHeader() {
     teams.appendChild(teamColor);
     teams.appendChild(document.createElement('br'));
   }
-  turn.style.borderColor = TeamBorderColor[currentPlayerTeam];
+  if (numPlayersWaiting <= 0) {
+    turn.style.borderColor = TeamBorderColor[currentPlayerTeam];
+  }
   header.appendChild(turn);
   header.appendChild(teams);
   document.body.appendChild(header);
@@ -515,7 +517,8 @@ function addDropShadowFilterToCardInBoard(card, teamColor) {
   if (card === null) { return; }
   var cardPos = CARD_POSITIONS[card.id];
   // don't highlight cards that already have tokens on them
-  if (GameState.board[cardPos.x][cardPos.y].token != null) {
+  var cardBoard = GameState.board[cardPos.x][cardPos.y];
+  if (cardBoard.token != null) {
     return removeDropShadowFilter(card);
   }
   card.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
