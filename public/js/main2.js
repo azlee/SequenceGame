@@ -433,7 +433,7 @@ function renderHeader() {
   for (var team of GameState.teams.keys()) {
     var teamPlayers = GameState.teams.get(team).players;
     var teamText = team + ': ' + GameState.players.get(teamPlayers[0]).name;
-    for (var i = 1; i < teamPlayers.size; i++) {
+    for (var i = 1; i < teamPlayers.length; i++) {
       teamText += ', ';
       teamText += GameState.players(teamPlayers[i]).name;
     }

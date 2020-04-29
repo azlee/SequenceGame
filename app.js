@@ -386,6 +386,8 @@ function createPlayer(gameRoom, id, name) {
       sequences: [],
       players: [id],
     });
+  } else {
+    GAME_LOBBIES.get(gameRoom).teams.get(team).players.push(id);
   }
   var numCardsPerPerson = getNumberOfCardsForPlayers(GAME_LOBBIES.get(gameRoom).numPlayers);
   var player = {
