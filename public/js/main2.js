@@ -21,7 +21,7 @@ const Team = {
   RED: "RED"
 }
 
-var SequenceType = {
+const SequenceType = {
   HORIZONTAL: "HORIZONTAL",
   VERTICAL: "VERTICAL",
   TOPLEFT_RIGHTDOWN: "TOPLEFT RIGHTDOWN",
@@ -34,13 +34,13 @@ const ColorChip = {
   RED: "/imgs/red-chip.png"
 }
 
-var TeamBorderColor = {
+const TeamBorderColor = {
   BLUE: "rgb(0, 184, 230)",
   GREEN: "rgb(51, 204, 51)",
   RED: "rgb(255, 71, 26)",
 }
 
-var ModalType = {
+const ModalType = {
   GAME_LOBBY: "GAME LOBBY",
   CREATE_NEW_GAME_FORM: "CREATE NEW GAME FORM",
   JOIN_NEW_GAME: "JOIN NEW GAME",
@@ -48,12 +48,12 @@ var ModalType = {
   PLAYER_LEFT: "PLAYER LEFT"
 }
 
-var NUMBER_OF_PLAYERS = [2, 3, 4, 6, 8, 9, 12];
+const NUMBER_OF_PLAYERS = [2, 3, 4, 6, 8, 9, 12];
 
-var WINNER_GIFS = ["/imgs/cardWinner.gif", "/imgs/cardWinner2.gif", "/imgs/cardWinner3.gif", "/imgs/cardWinner4.gif", "/imgs/cardWinner5.gif", "/imgs/cardWinner6.gif", "/imgs/cardWinner7.gif", "/imgs/cardWinner8.gif"];
+const WINNER_GIFS = ["/imgs/cardWinner.gif", "/imgs/cardWinner2.gif", "/imgs/cardWinner3.gif", "/imgs/cardWinner4.gif", "/imgs/cardWinner5.gif", "/imgs/cardWinner6.gif", "/imgs/cardWinner7.gif", "/imgs/cardWinner8.gif"];
 
 // Map of the cards and their position in GameState.board
-var CARD_POSITIONS = {
+const CARD_POSITIONS = {
   '2S1': {x: 1, y: 0},
   '3S1': {x: 2, y: 0},
   '4S1': {x: 3, y: 0},

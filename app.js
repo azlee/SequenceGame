@@ -119,27 +119,27 @@ var GAME_LOBBIES = new Map();
 /* Map of all the connected sockets */
 var SOCKETS_MAP = new Map();
 
-var BOARD_WIDTH = 10;
+const BOARD_WIDTH = 10;
 
-var TeamColor = {
+const TeamColor = {
   RED: "RED",
   GREEN: "GREEN",
   BLUE: "BLUE"
 };
 
-var COLORS = ["GREEN", "BLUE", "RED"]
+const COLORS = ["GREEN", "BLUE", "RED"]
 
-var SequenceType = {
+const SequenceType = {
   HORIZONTAL: "HORIZONTAL",
   VERTICAL: "VERTICAL",
   TOPLEFT_RIGHTDOWN: "TOPLEFT RIGHTDOWN",
   BOTTOMLEFT_RIGHTTOP: "BOTTOMLEFT RIGHTTOP"
 }
 
-var SEQUENCE_LENGTH = 5;
+const SEQUENCE_LENGTH = 5;
 
-var CARDS_IN_DECK = ['JC', 'JC', 'JD', 'JD', 'JH', 'JH', 'JS', 'JS', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', '6S', '5C', '4C', '3C', '2C', 'AH', 'KH', 'QH', '10H', '10S', '7C', 'AS', '2D', '3D', '4D', '5D', '6D', '7D', '9H', 'QS', '8C', 'KS', '6C', '5C', '4C', '3C', '2C', '8D', '8H', 'KS', '9C', 'QS', '7C', '6H', '5H', '4H', 'AH', '9D', '7H', 'AS', '10C', '10S', '8C', '7H', '2H', '3H', 'KH', '10D', '6H', '2D', 'QC', '9S', '9C', '8H', '9H', '10H', 'QH', 'QD', '5H', '2D', 'KC', '8S', '10C', 'QC', 'KC', 'AC', 'AD', 'KD', '4H', '4D', 'AC', '7S', '6S', '5S', '4S', '3S', '2S', '2H', '3H', '5D', 'AD', 'KD', 'QD', '10D', '9D', '8D', '7D', '6D'];
-var CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', '9S1', 'W'], 
+const CARDS_IN_DECK = ['JC', 'JC', 'JD', 'JD', 'JH', 'JH', 'JS', 'JS', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', '6S', '5C', '4C', '3C', '2C', 'AH', 'KH', 'QH', '10H', '10S', '7C', 'AS', '2D', '3D', '4D', '5D', '6D', '7D', '9H', 'QS', '8C', 'KS', '6C', '5C', '4C', '3C', '2C', '8D', '8H', 'KS', '9C', 'QS', '7C', '6H', '5H', '4H', 'AH', '9D', '7H', 'AS', '10C', '10S', '8C', '7H', '2H', '3H', 'KH', '10D', '6H', '2D', 'QC', '9S', '9C', '8H', '9H', '10H', 'QH', 'QD', '5H', '2D', 'KC', '8S', '10C', 'QC', 'KC', 'AC', 'AD', 'KD', '4H', '4D', 'AC', '7S', '6S', '5S', '4S', '3S', '2S', '2H', '3H', '5D', 'AD', 'KD', 'QD', '10D', '9D', '8D', '7D', '6D'];
+const CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', '9S1', 'W'], 
                          ['6C1', '5C1', '4C1', '3C1', '2C1', 'AH1', 'KH1', 'QH1', '10H1', '10S1'], 
                          ['7C1', 'AS1', '2D1', '3D1', '4D1', '5D1', '6D1', '7D1', '9H1', 'QS1'], 
                          ['8C1', 'KS1', '6C2', '5C2', '4C2', '3C2', '2C2', '8D1', '8H1', 'KS2'], 
@@ -149,7 +149,7 @@ var CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', 
                          ['KC1', '8S2', '10C2', 'QC2', 'KC2', 'AC1', 'AD1', 'KD1', '4H2', '4D2'], 
                          ['AC2', '7S2', '6S2', '5S2', '4S2', '3S2', '2S2', '2H2', '3H2', '5D2'], 
                          ['W', 'AD2', 'KD2', 'QD2', '10D2', '9D2', '8D2', '7D2', '6D2', 'W']];
-var WRONG_NUMBER_PLAYERS_ERROR = "%s players is not supported.";
+const WRONG_NUMBER_PLAYERS_ERROR = "%s players is not supported.";
 
 const MoveType = {
   PLACE_TOKEN: "PLACE TOKEN",
@@ -158,7 +158,7 @@ const MoveType = {
 }
 
 // Map of the cards and their position in GameState.board
-var CARD_POSITIONS = {
+const CARD_POSITIONS = {
   '2S1': {x: 1, y: 0},
   '3S1': {x: 2, y: 0},
   '4S1': {x: 3, y: 0},
@@ -266,9 +266,9 @@ var CARD_POSITIONS = {
   '6D2': {x: 8, y: 9}
 }
 
-var INVALID_ROOM_CODE_ERROR = "Invalid room code";
-var MAX_PLAYERS_ERROR = "Invalid room code";
-var PLAYER_WITH_SAME_NAME_ERROR = "Player with name '%s' is already in game. Choose different name";
+const INVALID_ROOM_CODE_ERROR = "Invalid room code";
+const MAX_PLAYERS_ERROR = "Invalid room code";
+const PLAYER_WITH_SAME_NAME_ERROR = "Player with name '%s' is already in game. Choose different name";
 
 /****************************************************************************
 * 
@@ -303,7 +303,7 @@ function initializeGameState(gameRoomId, numPlayers) {
   var numTeams = getNumberOfTeamsForPlayers(numPlayers);
   var numSequencesForWin = getNumberOfSequencesForWin(numTeams);
   var GameState = {
-    cardDeck: shuffle(CARDS_IN_DECK),
+    cardDeck: shuffle(CARDS_IN_DECK.slice()),
     deadCards: [],
     discardCards: [],
     currentPlayer: 0,
