@@ -435,7 +435,7 @@ function renderHeader() {
     var teamText = team + ': ' + GameState.players.get(teamPlayers[0]).name;
     for (var i = 1; i < teamPlayers.length; i++) {
       teamText += ', ';
-      teamText += GameState.players(teamPlayers[i]).name;
+      teamText += GameState.players.get(teamPlayers[i]).name;
     }
     var teamColor = document.createElement('span');
     teamColor.style.color = TeamBorderColor[team];
