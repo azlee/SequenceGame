@@ -29,6 +29,9 @@ html, body {
   text-align: left;
   color: #fff;
   font-size: 0.9rem;
+  border: .1rem dashed #fff;
+  padding: .2rem .2rem;
+  margin-right: 1.5rem;
 }
 
 span.dot {
