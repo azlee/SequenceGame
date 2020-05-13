@@ -315,27 +315,30 @@ function renderBoard(prevGameState) {
  */
 function renderCardsInHand(prevCards) {
   var cardsDiv = document.getElementById("cards-in-hand");
+  cardsDiv.innerHTML = '';
   // TODO: only render the new playing card after player places a token
   var i = 0;
   var cards = GameState.players.get(playerId).cardsInHand;
-  if (!prevCards || prevCards.length === 0) {
+  // if (!prevCards || prevCards.length === 0) {
     for (var card of cards) {
-      var cardDiv = createPlayingCard(card, i);
-      cardDiv.id = 'card-' + i;
-      i++;
-      cardsDiv.appendChild(cardDiv);
-    }
-  } else {
-    for (var i = 0; i < cards.length; i++) {
-      if (prevCards[i] !== cards[i]) {
-        var card = cards[i];
-        var cardDiv = document.getElementById('card-' + i);
-        var newCard = createPlayingCard(card, i);
-        newCard.id = 'card-' + i;
-        cardDiv.parentNode.replaceChild(newCard, cardDiv);
+      if (card) {
+        var cardDiv = createPlayingCard(card, i);
+        cardDiv.id = 'card-' + i;
+        cardsDiv.appendChild(cardDiv);
       }
+      i++;
     }
-  }
+  // } else {
+  //   for (var i = 0; i < cards.length; i++) {
+  //     if (prevCards[i] !== cards[i]) {
+  //       var card = cards[i];
+  //       var cardDiv = document.getElementById('card-' + i);
+  //       var newCard = createPlayingCard(card, i);
+  //       newCard.id = 'card-' + i;
+  //       cardDiv.parentNode.replaceChild(newCard, cardDiv);
+  //     }
+  //   }
+  // }
 }
 
 function putBorderAroundSequence(sequence) {
@@ -398,6 +401,8 @@ function renderTokens(prevBoard) {
         var id = card.card;
         var cardDiv = document.getElementById(id);
         cardDiv.src = ColorChip[card.token];
+        // remove any drop shadow
+        removeDropShadowFilter(cardDiv);
       } else if (prevCard.token != card.token) {
         var id = card.card;
         var cardDiv = document.getElementById(id);
@@ -497,22 +502,6 @@ function moveDown(card) {
   card.style.position = '';
   card.style.top = '';
 }
-
-function addDropShadowToPlayingCard(card) {
-  var playingCard = document.getElementsByClassName(card);
-  for (var card of playingCard) {
-    if (card.style.filter === "") {
-      addDropShadow(card);
-      moveUp(card);
-    } else {
-      removeDropShadow(card);
-      moveDown(card);
-      var toggle = document.getElementById('checkbox');
-      toggle.checked = false;
-    }
-  }
-}
-
 function addDropShadowFilterToCardInBoard(card, teamColor) {
   if (card === null) { return; }
   var cardPos = CARD_POSITIONS[card.id];
@@ -590,7 +579,7 @@ function addDisableEnableButton() {
 
   function validateNextButton() {
     var isNameEntered = $('#nameInput').val().trim() !== '';
-    var isNumericName = /^[a-zA-Z]*$/g.test($('#nameInput').val());
+    var isNumericName = /^[\s\S]*$/g.test($('#nameInput').val());
     var isRoomCodeEntered = !roomCodeButton || ($('#roomCodeInput').val().trim().length === 4);
     $('#joinOrCreateGame').prop('disabled', !isNameEntered || !isRoomCodeEntered || !isNumericName);
   }
@@ -831,6 +820,7 @@ function renderHighlightedCards() {
   for (var i of Object.keys(highlightedCards)) {
     if (highlightedCards[i]) {
       var card = document.getElementById('card-' + i);
+      if (!card) { continue; }
       // add style to card in hand
       addDropShadow(card);
       moveUp(card);
@@ -841,6 +831,7 @@ function renderHighlightedCards() {
       addDropShadowFilterToCardInBoard(document.getElementById(answerCards[i] + '2'), TeamBorderColor[player.team]);
     } else {
       var card = document.getElementById('card-' + i);
+      if (!card) { continue; }
       removeDropShadow(card);
       moveDown(card);
       // remove style to card in board

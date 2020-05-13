@@ -138,7 +138,25 @@ const SequenceType = {
 
 const SEQUENCE_LENGTH = 5;
 
-const CARDS_IN_DECK = ['JC', 'JC', 'JD', 'JD', 'JH', 'JH', 'JS', 'JS', '2S', '3S', '4S', '5S', '6S', '7S', '8S', '9S', '6S', '5C', '4C', '3C', '2C', 'AH', 'KH', 'QH', '10H', '10S', '7C', 'AS', '2D', '3D', '4D', '5D', '6D', '7D', '9H', 'QS', '8C', 'KS', '6C', '5C', '4C', '3C', '2C', '8D', '8H', 'KS', '9C', 'QS', '7C', '6H', '5H', '4H', 'AH', '9D', '7H', 'AS', '10C', '10S', '8C', '7H', '2H', '3H', 'KH', '10D', '6H', '2D', 'QC', '9S', '9C', '8H', '9H', '10H', 'QH', 'QD', '5H', '2D', 'KC', '8S', '10C', 'QC', 'KC', 'AC', 'AD', 'KD', '4H', '4D', 'AC', '7S', '6S', '5S', '4S', '3S', '2S', '2H', '3H', '5D', 'AD', 'KD', 'QD', '10D', '9D', '8D', '7D', '6D'];
+const CARDS_IN_DECK = [
+'JC', 'JC', 'JD', 'JD', 'JH', 'JH', 
+'JS', 'JS', '2S', '3S', '4S', '5S', 
+'6S', '7S', '8S', '9S', '6C', '5C', 
+'4C', '3C', '2C', 'AH', 'KH', 'QH', 
+'10H', '10S', '7C', 'AS', '2D', '3D', 
+'4D', '5D', '6D', '7D', '9H', 'QS', 
+'8C', 'KS', '6C', '5C', '4C', '3C', 
+'2C', '8D', '8H', 'KS', '9C', 'QS', 
+'7C', '6H', '5H', '4H', 'AH', '9D', 
+'7H', 'AS', '10C', '10S', '8C', '7H', 
+'2H', '3H', 'KH', '10D', '6H', '2D', 
+'QC', '9S', '9C', '8H', '9H', '10H', 
+'QH', 'QD', '5H', '3D', 'KC', '8S', 
+'10C', 'QC', 'KC', 'AC', 'AD', 'KD', 
+'4H', '4D', 'AC', '7S', '6S', '5S', 
+'4S', '3S', '2S', '2H', '3H', '5D', 
+'AD', 'KD', 'QD', '10D', '9D', '8D', 
+'7D', '6D'];
 const CARDS_BOARD_ARRAY = [['W', '2S1', '3S1', '4S1', '5S1', '6S1', '7S1', '8S1', '9S1', 'W'], 
                          ['6C1', '5C1', '4C1', '3C1', '2C1', 'AH1', 'KH1', 'QH1', '10H1', '10S1'], 
                          ['7C1', 'AS1', '2D1', '3D1', '4D1', '5D1', '6D1', '7D1', '9H1', 'QS1'], 
@@ -339,16 +357,6 @@ function assignTeamColor(gameRoom, playerId) {
   return teamColor;
 }
 
-/**
- * Shuffle discard cards into deck
- * @param {*} gameRoom 
- */
-function reuseDiscardCards(gameRoom) {
-  var GameState = GAME_LOBBIES.get(gameRoom);
-  GameState.cardDeck = shuffle(GameState.discardCards);
-  GameState.discardCards = [];
-}
-
 function isDeadCard(gameRoom, card) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   for (var deadCard of GameState.deadCards) {
@@ -365,7 +373,9 @@ function isDeadCard(gameRoom, card) {
  */
 function getCard(gameRoom) {
   var card = GAME_LOBBIES.get(gameRoom).cardDeck.pop();
+  console.log('popped off card ' + card);
   if (isDeadCard(gameRoom, card)) {
+    console.log('recursing since card ' + card + ' is a dead card');
     return getCard(gameRoom);
   }
   return card;
@@ -644,17 +654,14 @@ function checkDeadCards(gameRoom, card) {
     GameState.deadCards.push(cardClass);
     // check if any players have the dead card if so remove
     for (var [id, player] of GameState.players) {
-      console.log('player is')
-      console.log(player)
       for (var i = 0; i < player.cardsInHand.length; i++) {
         var card = player.cardsInHand[i];
         if (card === cardClass) {
-          player.cardsInHand[i] = getCard(gameRoom);
+          player.cardsInHand[i] = getCard(gameRoom);;
         }
       }
     }
   }
-
 }
 
 /**
@@ -668,7 +675,6 @@ function placeTokenOnCard(gameRoom, playerId, card) {
   var GameState = GAME_LOBBIES.get(gameRoom);
   // check that the player has the card in their hand before placing token
   var positionCard = getPositionOfCardInHand(gameRoom, playerId, card);
-  console.log(positionCard);
   if (positionCard === -1) {
     console.log('player does not have card');
     throw "Player does not have the card in their hand";
@@ -678,11 +684,11 @@ function placeTokenOnCard(gameRoom, playerId, card) {
   var colorToken = GameState.players.get(playerId).team;
   GameState.board[position.x][position.y].token = colorToken;
 
-  // check for dead cards
-  checkDeadCards(gameRoom, card);
-
   // replace card in player's hand
   GameState.players.get(playerId).cardsInHand[positionCard] = getCard(gameRoom);
+
+  // check for dead cards
+  checkDeadCards(gameRoom, card);
 
   // check for sequences
   var sequences = getSequenceWithToken(gameRoom, colorToken, position.x, position.y);
@@ -769,10 +775,13 @@ function removeToken(gameRoom, playerId, card) {
   }
   GameState.board[position.x][position.y].token = null;
 
-  // check if in dead cards - if so, remove it
+  // check if in dead cards - if so, remove it and add back to card deck
   for (var i = 0; i < GameState.deadCards.length; i++) {
     if (GameState.deadCards[i] === card.substring(0, card.length - 1)) {
       GameState.deadCards.splice(i, 1);
+      GameState.cardDeck.push(card.substring(0, card.length - 1))
+      // shuffle deck
+      GameState.cardDeck = shuffle(GameState.cardDeck);
     }
   }
 
@@ -947,10 +956,10 @@ io.on('connection', function(socket) {
 
 function sendStateUpdate(gameRoomId) {
   var gameRoom = GAME_LOBBIES.get(gameRoomId);
-  console.log('GAME_LOBBIES is ')
-  console.log(GAME_LOBBIES)
-  console.log('sockets is ')
-  console.log(SOCKETS_MAP)
+  // console.log('GAME_LOBBIES is ')
+  // console.log(GAME_LOBBIES)
+  // console.log('sockets is ')
+  // console.log(SOCKETS_MAP)
   if (gameRoom) {
     // console.log('game room is ')
     // console.log(gameRoom)
