@@ -328,17 +328,6 @@ function renderCardsInHand(prevCards) {
       }
       i++;
     }
-  // } else {
-  //   for (var i = 0; i < cards.length; i++) {
-  //     if (prevCards[i] !== cards[i]) {
-  //       var card = cards[i];
-  //       var cardDiv = document.getElementById('card-' + i);
-  //       var newCard = createPlayingCard(card, i);
-  //       newCard.id = 'card-' + i;
-  //       cardDiv.parentNode.replaceChild(newCard, cardDiv);
-  //     }
-  //   }
-  // }
 }
 
 function putBorderAroundSequence(sequence) {
@@ -348,43 +337,43 @@ function putBorderAroundSequence(sequence) {
     // set left, top & bottom border for 1st element
     var leftCard = document.getElementById(cards[0].card);
     if (leftCard) {
-      leftCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
-      leftCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      leftCard.style.boxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
+      leftCard.style.webkitBoxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
     }
     for (var i = 1; i <= 3; i++) {
       var middleCard = document.getElementById(cards[i].card);
-      middleCard.style.boxShadow = 'inset 0 .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
-      middleCard.style.webkitBoxShadow = 'inset 0 .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      middleCard.style.boxShadow = 'inset 0 .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
+      middleCard.style.webkitBoxShadow = 'inset 0 .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
     }
     var rightCard = document.getElementById(cards[4].card);
     if (rightCard) {
-      rightCard.style.boxShadow = 'inset -.4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
-      rightCard.style.webkitBoxShadow = 'inset -.4rem .4rem .3rem ' + borderColor + ',inset 0 -.4rem .3rem ' + borderColor
+      rightCard.style.boxShadow = 'inset -.2rem .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
+      rightCard.style.webkitBoxShadow = 'inset -.2rem .2rem .15rem ' + borderColor + ',inset 0 -.2rem .15rem ' + borderColor
     }
   } else if (sequence.type === SequenceType.VERTICAL) {
     var cards = sequence.positions;
     var topCard = document.getElementById(cards[0].card);
     if (topCard) {
-      topCard.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
-      topCard.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      topCard.style.boxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
+      topCard.style.webkitBoxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
     }
     for (var i = 1; i <= 3; i++) {
       var middleCard = document.getElementById(cards[i].card);
-      middleCard.style.boxShadow = 'inset .4rem 0 .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
-      middleCard.style.webkitBoxShadow = 'inset .4rem 0 .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      middleCard.style.boxShadow = 'inset .2rem 0 .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
+      middleCard.style.webkitBoxShadow = 'inset .2rem 0 .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
     }
     var bottomCard = document.getElementById(cards[4].card);
     if (bottomCard) {
-      bottomCard.style.boxShadow = 'inset .4rem -.4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
-      bottomCard.style.webkitBoxShadow = 'inset .4rem -.4rem .3rem ' + borderColor + ',inset -.4rem 0 .3rem ' + borderColor
+      bottomCard.style.boxShadow = 'inset .2rem -.2rem .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
+      bottomCard.style.webkitBoxShadow = 'inset .2rem -.2rem .15rem ' + borderColor + ',inset -.2rem 0 .15rem ' + borderColor
     }
   } else { // diagonal sequence - put border on all sides
     for (var i = 0; i <= 4; i++) {
       var cards = sequence.positions;
       var card = document.getElementById(cards[i].card);
       if (card) {
-        card.style.boxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ', inset -.4rem -.4rem .3rem ' + borderColor;
-        card.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + borderColor + ', inset -.4rem -.4rem .3rem ' + borderColor;
+        card.style.boxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ', inset -.2rem -.2rem .15rem ' + borderColor;
+        card.style.webkitBoxShadow = 'inset .2rem .2rem .15rem ' + borderColor + ', inset -.2rem -.2rem .15rem ' + borderColor;
       }
     }
   }
@@ -495,7 +484,7 @@ function removeDropShadow(playingCard) {
 
 function moveUp(card) {
   card.style.position = 'relative';
-  card.style.top = '-1.5rem';
+  card.style.top = '-.55rem';
 }
 
 function moveDown(card) {
@@ -510,10 +499,10 @@ function addDropShadowFilterToCardInBoard(card, teamColor) {
   if (cardBoard.token != null) {
     return removeDropShadowFilter(card);
   }
-  card.style.boxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
-  card.style.webkitBoxShadow = 'inset .4rem .4rem .3rem ' + teamColor + ', inset -.4rem -.4rem .3rem ' + teamColor;
+  card.style.boxShadow = 'inset .2rem .2rem .15rem ' + teamColor + ', inset -.2rem -.2rem .15rem ' + teamColor;
+  card.style.webkitBoxShadow = 'inset .2rem .2rem .15rem ' + teamColor + ', inset -.2rem -.2rem .15rem ' + teamColor;
 
-  var filter = "drop-shadow(.5rem .5rem .5rem " + "gray" + ") drop-shadow(-.5rem -.5rem .5rem " + "gray" + ")";
+  var filter = "drop-shadow(.25rem .25rem .25rem " + "gray" + ") drop-shadow(-.25rem -.25rem .25rem " + "gray" + ")";
   card.style.filter = filter;
   card.style.webkitFilter = filter;
 }

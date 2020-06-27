@@ -12,7 +12,7 @@ html, body {
   left: 0;
   width: 100%;
   display: flex;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: .5rem .5rem .5rem .5rem;
   align-items: center;
   position: fixed;
   justify-content: space-between;
@@ -21,14 +21,14 @@ html, body {
 #roomCode {
   border: 1px dashed #fff;
   padding: .25rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 #teams {
   padding-right: 2rem;
   text-align: left;
   color: #fff;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   border: .1rem dashed #fff;
   padding: .2rem .2rem;
   margin-right: 1.5rem;
@@ -44,23 +44,47 @@ span.dot {
 
 .card-board {
   margin-top: 6rem;
-  margin-bottom: 20rem;
+  margin-bottom: 10rem;
   display: flex;
   flex-wrap: wrap;
   background-color: #737373;
 }
 
-@media only screen and (min-width: 1200px) and (max-width: 2500px) {
-  .card-board {
-    margin-left: 15%;
-    margin-right: 15%;
-  }
+@media only screen and (max-width: 600px) {
   .cards-in-hand {
     margin-left: 15%;
     margin-right: 15%;
   }
   .switch {
     margin-left: 15%;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 1000px) {
+  .card-board {
+    margin-left: 25%;
+    margin-right: 25%;
+  }
+  .cards-in-hand {
+    margin-left: 25%;
+    margin-right: 25%;
+  }
+  .switch {
+    margin-left: 25%;
+  }
+}
+
+@media only screen and (min-width: 1000px) and (max-width: 2500px) {
+  .card-board {
+    margin-left: 30%;
+    margin-right: 30%;
+  }
+  .cards-in-hand {
+    margin-left: 30%;
+    margin-right: 30%;
+  }
+  .switch {
+    margin-left: 30%;
   }
 }
 
@@ -81,8 +105,8 @@ span.dot {
 .cards-in-hand {
   display: flex;
   flex-wrap: wrap;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 
 .card-in-hand {
@@ -128,9 +152,10 @@ span.dot {
 }
 
 #turn {
-  padding: 10px 10px;
+  padding: 5px 5px;
   font-weight: bold;
   border-width: .15rem;
+  font-size:.9rem;
   border-style: solid;
 }
 
@@ -141,7 +166,7 @@ span.dot {
   z-index: 1; /* Sit on top */
   left: 0;
   top: 0;
-  padding-top: 10rem;
+  padding-top: 3rem;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
@@ -150,7 +175,7 @@ span.dot {
 }
 
 .modal img {
-  width: 60%;
+  width: 50%;
 }
 
 /* Modal Content */
@@ -161,7 +186,7 @@ span.dot {
   font-weight: bold;
   border: 1px solid #888;
   border-radius: 1rem; 
-  width: 66%;
+  width: 50%;
 }
 
 .modal-content #card {
@@ -169,17 +194,17 @@ span.dot {
 }
 
 .modal-content form {
-    font-size: 1.5rem;
+    font-size: 1rem;
 }
 
 .modal-content label {
-    margin: 1rem 1rem;
-    font-size: 1.25rem;
+    margin: .5rem .5rem;
+    font-size: 1rem;
 }
 
 .modal-content input {
-    font-size: 1.25rem;
-    margin: .75rem .75rem;
+    font-size: 1rem;
+    margin: .5rem .5rem;
 }
 
 .modal-content select {
@@ -192,10 +217,10 @@ span.dot {
     letter-spacing: .05rem;
     background-color: #d9d9d9;
     border-radius: .4rem;
-    margin: .75rem .75rem 1.2rem;
-    padding: 1rem 1.3rem;
+    margin: .5rem .5rem 1rem;
+    padding: .7rem 1rem;
     cursor: pointer;
-    font-size: .8rem;
+    font-size: .7rem;
     -webkit-transition: all .15s ease-in-out;
     -moz-transition: all .15s ease-in-out;
     -o-transition: all .15s ease-in-out;
@@ -218,12 +243,12 @@ span.dot {
 }
 
 .switch {
-  margin-top: 1rem; 
+  margin-top: .5rem; 
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 25px;
-  margin-bottom: 20px;
+  width: 20px;
+  height: 12.5px;
+  margin-bottom: 2px;
 }
 
 .switch input {
@@ -247,10 +272,10 @@ span.dot {
 .slider:before {
   position: absolute;
   content: "";
-  height: 19px;
-  width: 19px;
-  left: 3px;
-  bottom: 3px;
+  height: 9.5px;
+  width: 9.5px;
+  left: 1.5px;
+  bottom: 1.5px;
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
@@ -265,14 +290,14 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(16px);
-  -ms-transform: translateX(16px);
-  transform: translateX(16px);
+  -webkit-transform: translateX(8px);
+  -ms-transform: translateX(8px);
+  transform: translateX(8px);
 }
 
 /* Rounded sliders */
 .slider.round {
-  border-radius: 25px;
+  border-radius: 12.5px;
 }
 
 .slider.round:before {
