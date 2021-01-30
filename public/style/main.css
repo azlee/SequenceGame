@@ -1,7 +1,8 @@
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
-  margin:0;
+  margin: 0;
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
@@ -48,6 +49,7 @@ span.dot {
   display: flex;
   flex-wrap: wrap;
   background-color: #737373;
+  transform: rotate(0deg);
 }
 
 @media only screen and (max-width: 600px) {
@@ -55,8 +57,13 @@ span.dot {
     margin-left: 15%;
     margin-right: 15%;
   }
+
   .switch {
     margin-left: 15%;
+  }
+
+  .rotate-switch {
+    margin-left: 62.3%;
   }
 }
 
@@ -65,12 +72,18 @@ span.dot {
     margin-left: 25%;
     margin-right: 25%;
   }
+
   .cards-in-hand {
     margin-left: 25%;
     margin-right: 25%;
   }
+
   .switch {
     margin-left: 25%;
+  }
+
+  .rotate-switch {
+    margin-left: 72.3%;
   }
 }
 
@@ -79,12 +92,18 @@ span.dot {
     margin-left: 30%;
     margin-right: 30%;
   }
+
   .cards-in-hand {
     margin-left: 30%;
     margin-right: 30%;
   }
+
   .switch {
     margin-left: 30%;
+  }
+
+  .rotate-switch {
+    margin-left: 77.3%;
   }
 }
 
@@ -93,12 +112,18 @@ span.dot {
     margin-left: 30%;
     margin-right: 30%;
   }
+
   .cards-in-hand {
     margin-left: 30%;
     margin-right: 30%;
   }
+
   .switch {
     margin-left: 30%;
+  }
+
+  .rotate-switch {
+    margin-left: 77.3%;
   }
 }
 
@@ -155,23 +180,31 @@ span.dot {
   padding: 5px 5px;
   font-weight: bold;
   border-width: .15rem;
-  font-size:.9rem;
+  font-size: .9rem;
   border-style: solid;
 }
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
   left: 0;
   top: 0;
   padding-top: 3rem;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
 .modal img {
@@ -185,26 +218,26 @@ span.dot {
   margin: auto;
   font-weight: bold;
   border: 1px solid #888;
-  border-radius: 1rem; 
+  border-radius: 1rem;
   width: 50%;
 }
 
 .modal-content #card {
-    text-align: left !important;
+  text-align: left !important;
 }
 
 .modal-content form {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 .modal-content label {
-    margin: .5rem .5rem;
-    font-size: 1rem;
+  margin: .5rem .5rem;
+  font-size: 1rem;
 }
 
 .modal-content input {
-    font-size: 1rem;
-    margin: .5rem .5rem;
+  font-size: 1rem;
+  margin: .5rem .5rem;
 }
 
 .modal-content select {
@@ -213,23 +246,23 @@ span.dot {
 }
 
 .modal-content button {
-    font-weight: bold;
-    letter-spacing: .05rem;
-    background-color: #d9d9d9;
-    border-radius: .4rem;
-    margin: .5rem .5rem 1rem;
-    padding: .7rem 1rem;
-    cursor: pointer;
-    font-size: .7rem;
-    -webkit-transition: all .15s ease-in-out;
-    -moz-transition: all .15s ease-in-out;
-    -o-transition: all .15s ease-in-out;
-    -ms-transition: all .15s ease-in-out;
-    transition: all .15s ease-in-out;
+  font-weight: bold;
+  letter-spacing: .05rem;
+  background-color: #d9d9d9;
+  border-radius: .4rem;
+  margin: .5rem .5rem 1rem;
+  padding: .7rem 1rem;
+  cursor: pointer;
+  font-size: .7rem;
+  -webkit-transition: all .15s ease-in-out;
+  -moz-transition: all .15s ease-in-out;
+  -o-transition: all .15s ease-in-out;
+  -ms-transition: all .15s ease-in-out;
+  transition: all .15s ease-in-out;
 }
 
 .modal-content button:hover {
-    background-color: #bfbfbf;
+  background-color: #bfbfbf;
 }
 
 .winner-modal {
@@ -242,8 +275,9 @@ span.dot {
   width: 75%;
 }
 
+/* Slider for card hinting */
 .switch {
-  margin-top: .5rem; 
+  margin-top: .5rem;
   position: relative;
   display: inline-block;
   width: 20px;
@@ -251,7 +285,27 @@ span.dot {
   margin-bottom: 2px;
 }
 
+/* Check box for card hinting */
+/* Opacity is zero so it is effectivly disabled since it is not visable */
 .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Slider for board rotation */
+.rotate-switch {
+  margin-top: .5rem;
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 12.5px;
+  margin-bottom: 2px;
+}
+
+/* Check box for board rotation */
+/* Opacity is zero so it is effectivly disabled since it is not visable */
+.rotate-switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -281,15 +335,15 @@ span.dot {
   transition: .4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #2196F3;
 }
 
-input:focus + .slider {
+input:focus+.slider {
   box-shadow: 0 0 1px #2196F3;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   -webkit-transform: translateX(8px);
   -ms-transform: translateX(8px);
   transform: translateX(8px);

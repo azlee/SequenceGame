@@ -1,13 +1,16 @@
 'use strict';
 
 /****************************************************************************
-* 
-* Enumerations
-* 
-****************************************************************************/
+ * 
+ * Enumerations
+ * 
+ ****************************************************************************/
 var playerId;
 
 var GameState = {};
+
+/* Keep track of board rotation */
+var BoardRotation;
 
 const MoveType = {
   PLACE_TOKEN: "PLACE TOKEN",
@@ -54,111 +57,399 @@ const WINNER_GIFS = ["/imgs/cardWinner.gif", "/imgs/cardWinner2.gif", "/imgs/car
 
 // Map of the cards and their position in GameState.board
 const CARD_POSITIONS = {
-  '2S1': {x: 1, y: 0},
-  '3S1': {x: 2, y: 0},
-  '4S1': {x: 3, y: 0},
-  '5S1': {x: 4, y: 0},
-  '6S1': {x: 5, y: 0},
-  '7S1': {x: 6, y: 0},
-  '8S1': {x: 7, y: 0},
-  '9S1': {x: 8, y: 0},
+  '2S1': {
+    x: 1,
+    y: 0
+  },
+  '3S1': {
+    x: 2,
+    y: 0
+  },
+  '4S1': {
+    x: 3,
+    y: 0
+  },
+  '5S1': {
+    x: 4,
+    y: 0
+  },
+  '6S1': {
+    x: 5,
+    y: 0
+  },
+  '7S1': {
+    x: 6,
+    y: 0
+  },
+  '8S1': {
+    x: 7,
+    y: 0
+  },
+  '9S1': {
+    x: 8,
+    y: 0
+  },
 
-  '6C1': {x: 0, y: 1},
-  '5C1': {x: 1, y: 1},
-  '4C1': {x: 2, y: 1},
-  '3C1': {x: 3, y: 1},
-  '2C1': {x: 4, y: 1},
-  'AH1': {x: 5, y: 1},
-  'KH1': {x: 6, y: 1},
-  'QH1': {x: 7, y: 1},
-  '10H1': {x: 8, y: 1},
-  '10S1': {x: 9, y: 1},
+  '6C1': {
+    x: 0,
+    y: 1
+  },
+  '5C1': {
+    x: 1,
+    y: 1
+  },
+  '4C1': {
+    x: 2,
+    y: 1
+  },
+  '3C1': {
+    x: 3,
+    y: 1
+  },
+  '2C1': {
+    x: 4,
+    y: 1
+  },
+  'AH1': {
+    x: 5,
+    y: 1
+  },
+  'KH1': {
+    x: 6,
+    y: 1
+  },
+  'QH1': {
+    x: 7,
+    y: 1
+  },
+  '10H1': {
+    x: 8,
+    y: 1
+  },
+  '10S1': {
+    x: 9,
+    y: 1
+  },
 
-  '7C1': {x: 0, y: 2},
-  'AS1': {x: 1, y: 2},
-  '2D1': {x: 2, y: 2},
-  '3D1': {x: 3, y: 2},
-  '4D1': {x: 4, y: 2},
-  '5D1': {x: 5, y: 2},
-  '6D1': {x: 6, y: 2},
-  '7D1': {x: 7, y: 2},
-  '9H1': {x: 8, y: 2},
-  'QS1': {x: 9, y: 2},
+  '7C1': {
+    x: 0,
+    y: 2
+  },
+  'AS1': {
+    x: 1,
+    y: 2
+  },
+  '2D1': {
+    x: 2,
+    y: 2
+  },
+  '3D1': {
+    x: 3,
+    y: 2
+  },
+  '4D1': {
+    x: 4,
+    y: 2
+  },
+  '5D1': {
+    x: 5,
+    y: 2
+  },
+  '6D1': {
+    x: 6,
+    y: 2
+  },
+  '7D1': {
+    x: 7,
+    y: 2
+  },
+  '9H1': {
+    x: 8,
+    y: 2
+  },
+  'QS1': {
+    x: 9,
+    y: 2
+  },
 
-  '8C1': {x: 0, y: 3},
-  'KS1': {x: 1, y: 3},
-  '6C2': {x: 2, y: 3},
-  '5C2': {x: 3, y: 3},
-  '4C2': {x: 4, y: 3},
-  '3C2': {x: 5, y: 3},
-  '2C2': {x: 6, y: 3},
-  '8D1': {x: 7, y: 3},
-  '8H1': {x: 8, y: 3},
-  'KS2': {x: 9, y: 3},
+  '8C1': {
+    x: 0,
+    y: 3
+  },
+  'KS1': {
+    x: 1,
+    y: 3
+  },
+  '6C2': {
+    x: 2,
+    y: 3
+  },
+  '5C2': {
+    x: 3,
+    y: 3
+  },
+  '4C2': {
+    x: 4,
+    y: 3
+  },
+  '3C2': {
+    x: 5,
+    y: 3
+  },
+  '2C2': {
+    x: 6,
+    y: 3
+  },
+  '8D1': {
+    x: 7,
+    y: 3
+  },
+  '8H1': {
+    x: 8,
+    y: 3
+  },
+  'KS2': {
+    x: 9,
+    y: 3
+  },
 
-  '9C1': {x: 0, y: 4},
-  'QS2': {x: 1, y: 4},
-  '7C2': {x: 2, y: 4},
-  '6H1': {x: 3, y: 4},
-  '5H1': {x: 4, y: 4},
-  '4H1': {x: 5, y: 4},
-  'AH2': {x: 6, y: 4},
-  '9D1': {x: 7, y: 4},
-  '7H1': {x: 8, y: 4},
-  'AS2': {x: 9, y: 4},
+  '9C1': {
+    x: 0,
+    y: 4
+  },
+  'QS2': {
+    x: 1,
+    y: 4
+  },
+  '7C2': {
+    x: 2,
+    y: 4
+  },
+  '6H1': {
+    x: 3,
+    y: 4
+  },
+  '5H1': {
+    x: 4,
+    y: 4
+  },
+  '4H1': {
+    x: 5,
+    y: 4
+  },
+  'AH2': {
+    x: 6,
+    y: 4
+  },
+  '9D1': {
+    x: 7,
+    y: 4
+  },
+  '7H1': {
+    x: 8,
+    y: 4
+  },
+  'AS2': {
+    x: 9,
+    y: 4
+  },
 
-  '10C1': {x: 0, y: 5},
-  '10S2': {x: 1, y: 5},
-  '8C2': {x: 2, y: 5},
-  '7H2': {x: 3, y: 5},
-  '2H1': {x: 4, y: 5},
-  '3H1': {x: 5, y: 5},
-  'KH2': {x: 6, y: 5},
-  '10D1': {x: 7, y: 5},
-  '6H2': {x: 8, y: 5},
-  '2D2': {x: 9, y: 5},
+  '10C1': {
+    x: 0,
+    y: 5
+  },
+  '10S2': {
+    x: 1,
+    y: 5
+  },
+  '8C2': {
+    x: 2,
+    y: 5
+  },
+  '7H2': {
+    x: 3,
+    y: 5
+  },
+  '2H1': {
+    x: 4,
+    y: 5
+  },
+  '3H1': {
+    x: 5,
+    y: 5
+  },
+  'KH2': {
+    x: 6,
+    y: 5
+  },
+  '10D1': {
+    x: 7,
+    y: 5
+  },
+  '6H2': {
+    x: 8,
+    y: 5
+  },
+  '2D2': {
+    x: 9,
+    y: 5
+  },
 
-  'QC1': {x: 0, y: 6},
-  '9S2': {x: 1, y: 6},
-  '9C2': {x: 2, y: 6},
-  '8H2': {x: 3, y: 6},
-  '9H2': {x: 4, y: 6},
-  '10H2': {x: 5, y: 6},
-  'QH2': {x: 6, y: 6},
-  'QD1': {x: 7, y: 6},
-  '5H2': {x: 8, y: 6},
-  '3D2': {x: 9, y: 6},
+  'QC1': {
+    x: 0,
+    y: 6
+  },
+  '9S2': {
+    x: 1,
+    y: 6
+  },
+  '9C2': {
+    x: 2,
+    y: 6
+  },
+  '8H2': {
+    x: 3,
+    y: 6
+  },
+  '9H2': {
+    x: 4,
+    y: 6
+  },
+  '10H2': {
+    x: 5,
+    y: 6
+  },
+  'QH2': {
+    x: 6,
+    y: 6
+  },
+  'QD1': {
+    x: 7,
+    y: 6
+  },
+  '5H2': {
+    x: 8,
+    y: 6
+  },
+  '3D2': {
+    x: 9,
+    y: 6
+  },
 
-  'KC1': {x: 0, y: 7},
-  '8S2': {x: 1, y: 7},
-  '10C2': {x: 2, y: 7},
-  'QC2': {x: 3, y: 7},
-  'KC2': {x: 4, y: 7},
-  'AC1': {x: 5, y: 7},
-  'AD1': {x: 6, y: 7},
-  'KD1': {x: 7, y: 7},
-  '4H2': {x: 8, y: 7},
-  '4D2': {x: 9, y: 7},
+  'KC1': {
+    x: 0,
+    y: 7
+  },
+  '8S2': {
+    x: 1,
+    y: 7
+  },
+  '10C2': {
+    x: 2,
+    y: 7
+  },
+  'QC2': {
+    x: 3,
+    y: 7
+  },
+  'KC2': {
+    x: 4,
+    y: 7
+  },
+  'AC1': {
+    x: 5,
+    y: 7
+  },
+  'AD1': {
+    x: 6,
+    y: 7
+  },
+  'KD1': {
+    x: 7,
+    y: 7
+  },
+  '4H2': {
+    x: 8,
+    y: 7
+  },
+  '4D2': {
+    x: 9,
+    y: 7
+  },
 
-  'AC2': {x: 0, y: 8},
-  '7S2': {x: 1, y: 8},
-  '6S2': {x: 2, y: 8},
-  '5S2': {x: 3, y: 8},
-  '4S2': {x: 4, y: 8},
-  '3S2': {x: 5, y: 8},
-  '2S2': {x: 6, y: 8},
-  '2H2': {x: 7, y: 8},
-  '3H2': {x: 8, y: 8},
-  '5D2': {x: 9, y: 8},
+  'AC2': {
+    x: 0,
+    y: 8
+  },
+  '7S2': {
+    x: 1,
+    y: 8
+  },
+  '6S2': {
+    x: 2,
+    y: 8
+  },
+  '5S2': {
+    x: 3,
+    y: 8
+  },
+  '4S2': {
+    x: 4,
+    y: 8
+  },
+  '3S2': {
+    x: 5,
+    y: 8
+  },
+  '2S2': {
+    x: 6,
+    y: 8
+  },
+  '2H2': {
+    x: 7,
+    y: 8
+  },
+  '3H2': {
+    x: 8,
+    y: 8
+  },
+  '5D2': {
+    x: 9,
+    y: 8
+  },
 
-  'AD2': {x: 1, y: 9},
-  'KD2': {x: 2, y: 9},
-  'QD2': {x: 3, y: 9},
-  '10D2': {x: 4, y: 9},
-  '9D2': {x: 5, y: 9},
-  '8D2': {x: 6, y: 9},
-  '7D2': {x: 7, y: 9},
-  '6D2': {x: 8, y: 9}
+  'AD2': {
+    x: 1,
+    y: 9
+  },
+  'KD2': {
+    x: 2,
+    y: 9
+  },
+  'QD2': {
+    x: 3,
+    y: 9
+  },
+  '10D2': {
+    x: 4,
+    y: 9
+  },
+  '9D2': {
+    x: 5,
+    y: 9
+  },
+  '8D2': {
+    x: 6,
+    y: 9
+  },
+  '7D2': {
+    x: 7,
+    y: 9
+  },
+  '6D2': {
+    x: 8,
+    y: 9
+  }
 }
 
 // keep track of which cards in their hand the player has highlighted on the board
@@ -187,10 +478,10 @@ function getRandomWinnerGif() {
 }
 
 /****************************************************************************
-* 
-* Sockets
-* 
-****************************************************************************/
+ * 
+ * Sockets
+ * 
+ ****************************************************************************/
 
 var socket = io();
 console.log(socket)
@@ -200,49 +491,58 @@ console.log(socket)
  * @param {str} name - name of first player
  */
 function createGame(name, numPlayers) {
-    socket.emit('createGame', { name: name.trim(), numPlayers: numPlayers });
-    playerId = 0;
-    socket.on('createGameSuccess', function(gameRoom) {
-      var modal = document.getElementById('myModal');
-      modal.style.display = "none";
-      listenToRoomNotifications(gameRoom);
-      addEventListenersToCardsInBoard();
-      renderToggle();
-    })
+  socket.emit('createGame', {
+    name: name.trim(),
+    numPlayers: numPlayers
+  });
+  playerId = 0;
+  socket.on('createGameSuccess', function (gameRoom) {
+    var modal = document.getElementById('myModal');
+    modal.style.display = "none";
+    listenToRoomNotifications(gameRoom);
+    addEventListenersToCardsInBoard();
+    renderToggle();
+    renderToggleRotate();
+  })
 }
 
 /**
-* Allow player with name name to join room with roomCode
-* @param {str} name 
-* @param {str} roomCode 
-*/
+ * Allow player with name name to join room with roomCode
+ * @param {str} name 
+ * @param {str} roomCode 
+ */
 function joinGame(name, roomCode) {
   roomCode = roomCode.trim().toUpperCase();;
-  socket.emit('joinGame', { name: name, room: roomCode });
+  socket.emit('joinGame', {
+    name: name,
+    room: roomCode
+  });
   listenToRoomNotifications(roomCode)
 
-  socket.on('joinGameFailure', function(errorMsg) {
-      var errorDiv = document.getElementById('formPlaceholder');
-      errorDiv.innerHTML = errorMsg;
+  socket.on('joinGameFailure', function (errorMsg) {
+    var errorDiv = document.getElementById('formPlaceholder');
+    errorDiv.innerHTML = errorMsg;
   })
 }
 
 
 function listenToRoomNotifications(roomCode) {
-  socket.on(roomCode, function(msg) {
+  socket.on(roomCode, function (msg) {
     if (msg.state) {
       var prevGameState = Object.assign({}, GameState);
       GameState = msg.state;
       GameState.players = new Map(JSON.parse(msg.state.players));
       GameState.teams = new Map(JSON.parse(msg.state.teams));
       renderBoard(prevGameState);
-    } if (msg.joinGameSuccess) {
-        playerId = msg.playerId;
-        var modal = document.getElementById('myModal');
-        modal.style.display = "none";
-        renderBoard();
-        addEventListenersToCardsInBoard();
-        renderToggle();
+    }
+    if (msg.joinGameSuccess) {
+      playerId = msg.playerId;
+      var modal = document.getElementById('myModal');
+      modal.style.display = "none";
+      renderBoard();
+      addEventListenersToCardsInBoard();
+      renderToggle();
+      renderToggleRotate();
     }
   })
 }
@@ -256,10 +556,10 @@ window.onload = function () {
 };
 
 /****************************************************************************
-* 
-* Render HTML DOM elements
-* 
-****************************************************************************/
+ * 
+ * Render HTML DOM elements
+ * 
+ ****************************************************************************/
 
 /**
  * Render the board only if game state has changed
@@ -273,7 +573,7 @@ function renderBoard(prevGameState) {
     renderHeader();
     return;
   }
-  var prevNumSequences = 0; 
+  var prevNumSequences = 0;
   var cardsInHandChanged = prevGameState.players.get(playerId).cardsInHand != GameState.players.get(playerId).cardsInHand;
   var boardChanged = prevGameState.board != GameState.board;
   prevNumSequences += prevGameState.teams.get(Team.GREEN).sequences.size;
@@ -320,14 +620,14 @@ function renderCardsInHand(prevCards) {
   var i = 0;
   var cards = GameState.players.get(playerId).cardsInHand;
   // if (!prevCards || prevCards.length === 0) {
-    for (var card of cards) {
-      if (card) {
-        var cardDiv = createPlayingCard(card, i);
-        cardDiv.id = 'card-' + i;
-        cardsDiv.appendChild(cardDiv);
-      }
-      i++;
+  for (var card of cards) {
+    if (card) {
+      var cardDiv = createPlayingCard(card, i);
+      cardDiv.id = 'card-' + i;
+      cardsDiv.appendChild(cardDiv);
     }
+    i++;
+  }
 }
 
 function putBorderAroundSequence(sequence) {
@@ -466,7 +766,7 @@ function createPlayingCard(cardType, i) {
   card.className = "card-in-hand " + cardType;
   card.style = "width:" + widthOfCard + "%";
   card.src = "/imgs/" + cardType + ".png";
-  card.addEventListener("click", function(event) {
+  card.addEventListener("click", function (event) {
     applyMove(MoveType.SHOW_CARDS_ON_BOARD, cardType, i);
   }, false);
   return card;
@@ -491,8 +791,11 @@ function moveDown(card) {
   card.style.position = '';
   card.style.top = '';
 }
+
 function addDropShadowFilterToCardInBoard(card, teamColor) {
-  if (card === null) { return; }
+  if (card === null) {
+    return;
+  }
   var cardPos = CARD_POSITIONS[card.id];
   // don't highlight cards that already have tokens on them
   var cardBoard = GameState.board[cardPos.x][cardPos.y];
@@ -508,7 +811,9 @@ function addDropShadowFilterToCardInBoard(card, teamColor) {
 }
 
 function removeDropShadowFilter(card) {
-  if (card === null) { return; }
+  if (card === null) {
+    return;
+  }
   card.style.boxShadow = "";
   card.style.webkitBoxShadow = "";
   card.style.filter = "";
@@ -522,7 +827,7 @@ function addEventListenersToCardsInBoard() {
     var node = board.childNodes[i];
     if (node.nodeType === 1 && node.nodeName === 'IMG') {
       nodeNum++;
-      node.addEventListener("click", function(event) {
+      node.addEventListener("click", function (event) {
         if (event.srcElement.className != "wildcard") {
           applyMove(MoveType.PLACE_TOKEN, event.srcElement.id);
         }
@@ -575,7 +880,7 @@ function addDisableEnableButton() {
 
   $('#nameInput').on('keyup', validateNextButton);
   if (roomCodeButton) {
-      $('#roomCodeInput').on('keyup', validateNextButton);
+    $('#roomCodeInput').on('keyup', validateNextButton);
   }
 };
 
@@ -589,7 +894,7 @@ function createPlayForm(newGame) {
   nameLabel.innerHTML = 'Name: ';
   var nameInput = document.createElement('input');
   nameInput.id = 'nameInput';
-  nameInput.maxLength = "15" 
+  nameInput.maxLength = "15"
   nameInput.placeholder = "ENTER YOUR NAME";
   var imgDiv = document.createElement('img');
   imgDiv.src = "/imgs/honor_heart-14.png";
@@ -614,15 +919,15 @@ function createPlayForm(newGame) {
     formDiv.appendChild(numPlayersSelect);
   }
   if (!newGame) {
-      var codeLabel = document.createElement('label');
-      codeLabel.innerHTML = 'Room code: ';
-      var codeInput = document.createElement('input');
-      codeInput.id = 'roomCodeInput';
-      codeInput.maxLength = "4";
-      codeInput.size = "22";
-      codeInput.placeholder = "ENTER 4-LETTER CODE"
-      formDiv.appendChild(codeLabel);
-      formDiv.appendChild(codeInput);
+    var codeLabel = document.createElement('label');
+    codeLabel.innerHTML = 'Room code: ';
+    var codeInput = document.createElement('input');
+    codeInput.id = 'roomCodeInput';
+    codeInput.maxLength = "4";
+    codeInput.size = "22";
+    codeInput.placeholder = "ENTER 4-LETTER CODE"
+    formDiv.appendChild(codeLabel);
+    formDiv.appendChild(codeInput);
   }
   formDiv.appendChild(document.createElement('br'));
   // error msg placeholder
@@ -633,16 +938,16 @@ function createPlayForm(newGame) {
   var button = document.createElement('button');
   button.type = 'button'
   button.id = 'joinOrCreateGame';
-  button.innerHTML = newGame ? 'CREATE GAME' :'JOIN GAME';
+  button.innerHTML = newGame ? 'CREATE GAME' : 'JOIN GAME';
   button.disabled = true;
   if (newGame) {
-      button.addEventListener("click", function(event) {
-          createGame(document.getElementById('nameInput').value, document.getElementById('numPlayers').value);
-      });
+    button.addEventListener("click", function (event) {
+      createGame(document.getElementById('nameInput').value, document.getElementById('numPlayers').value);
+    });
   } else {
-      button.addEventListener("click", function(event) {
-          joinGame(document.getElementById('nameInput').value, document.getElementById('roomCodeInput').value);
-      }, false);
+    button.addEventListener("click", function (event) {
+      joinGame(document.getElementById('nameInput').value, document.getElementById('roomCodeInput').value);
+    }, false);
   }
   formDiv.append(button);
   return formDiv;
@@ -656,11 +961,11 @@ function createOptionForm() {
   var createNewGameButton = document.createElement('button');
   var joinExistingButton = document.createElement('button');
   // add action to button
-  createNewGameButton.addEventListener("click", function(event) {
-      renderModal(ModalType.CREATE_NEW_GAME_FORM)
+  createNewGameButton.addEventListener("click", function (event) {
+    renderModal(ModalType.CREATE_NEW_GAME_FORM)
   }, false);
-  joinExistingButton.addEventListener("click", function(event) {
-      renderModal(ModalType.JOIN_NEW_GAME)
+  joinExistingButton.addEventListener("click", function (event) {
+    renderModal(ModalType.JOIN_NEW_GAME)
   }, false);
   createNewGameButton.innerHTML = 'CREATE NEW GAME';
   joinExistingButton.innerHTML = 'JOIN EXISTING GAME';
@@ -673,6 +978,18 @@ function createOptionForm() {
   div.appendChild(joinExistingButton);
   div.style = "margin-bottom: 2rem;"
   return div;
+}
+
+function toggleRotate() {
+  /* Toggle board rotation */
+  BoardRotation = !BoardRotation;
+  var rotateBoard = document.getElementById('card-board');
+  /* Set board rotation CSS tag depending on BoardRotation */
+  if (BoardRotation) {
+    rotateBoard.style.transform = 'rotate(90deg)';
+  } else {
+    rotateBoard.style.transform = 'rotate(0deg)';
+  }
 }
 
 function togglePlayingCards() {
@@ -712,8 +1029,18 @@ function renderToggle() {
   toggle.style.display = "block"
   var checkbox = document.getElementById("checkbox");
   checkbox.checked = false;
-  checkbox.addEventListener( 'change', function() {
+  checkbox.addEventListener('change', function () {
     togglePlayingCards();
+  }, false);
+}
+
+function renderToggleRotate() {
+  var toggle = document.getElementById('rotate-toggle');
+  toggle.style.display = "block"
+  var checkbox = document.getElementById("rotate-checkbox");
+  checkbox.checked = false;
+  checkbox.addEventListener('change', function () {
+    toggleRotate();
   }, false);
 }
 
@@ -779,17 +1106,17 @@ function renderModal(modalType, winningTeam) {
     modalContent.innerHTML += modalHeader;
   }
   if (modalType === ModalType.JOIN_NEW_GAME || modalType === ModalType.GAME_LOBBY || modalType === ModalType.CREATE_NEW_GAME_FORM) {
-      modal.style.display = "block";
-      return;
+    modal.style.display = "block";
+    return;
   }
   var span = document.getElementsByClassName("close")[0];
-  span.addEventListener("click", function(event) {
-      modal.style.display = "none";
+  span.addEventListener("click", function (event) {
+    modal.style.display = "none";
   }, false);
-  window.onclick = function(event) {
-      if (event.target == modal) {
-          modal.style.display = "none";
-      }
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
   }
   modal.style.display = "block";
 }
@@ -809,7 +1136,9 @@ function renderHighlightedCards() {
   for (var i of Object.keys(highlightedCards)) {
     if (highlightedCards[i]) {
       var card = document.getElementById('card-' + i);
-      if (!card) { continue; }
+      if (!card) {
+        continue;
+      }
       // add style to card in hand
       addDropShadow(card);
       moveUp(card);
@@ -820,7 +1149,9 @@ function renderHighlightedCards() {
       addDropShadowFilterToCardInBoard(document.getElementById(answerCards[i] + '2'), TeamBorderColor[player.team]);
     } else {
       var card = document.getElementById('card-' + i);
-      if (!card) { continue; }
+      if (!card) {
+        continue;
+      }
       removeDropShadow(card);
       moveDown(card);
       // remove style to card in board
@@ -846,7 +1177,9 @@ function applyMove(move, card, i) {
   if (move === MoveType.SHOW_CARDS_ON_BOARD) {
     var toggle = document.getElementById('checkbox');
     var numCardsPerPerson = GameState.numCardsPerPerson;
-    if (highlightedCards[i]) { toggle.checked = false; }
+    if (highlightedCards[i]) {
+      toggle.checked = false;
+    }
     highlightedCards[i] = highlightedCards[i] ? false : true;
     if (getNumOfHighlightedCards() === numCardsPerPerson) {
       toggle.checked = true;
@@ -862,19 +1195,21 @@ function applyMove(move, card, i) {
     // }
     // can only place token if it's the player's turn and if they have the card in their hand
     // and if the card is not occupied by another token
-     var isOccupied = checkIfCardOccupied(card);
-     var cardPosition = CARD_POSITIONS[card];
-     if (isOccupied) { // player is trying to remove a token
+    var isOccupied = checkIfCardOccupied(card);
+    var cardPosition = CARD_POSITIONS[card];
+    if (isOccupied) { // player is trying to remove a token
       // check that player has a one eyed jack
       var oneEyedJackPosition = getOneEyedJack();
-      if (oneEyedJackPosition === -1) { return; }
+      if (oneEyedJackPosition === -1) {
+        return;
+      }
       // if card is part of sequence then invalid move
       if (GameState.board[cardPosition.x][cardPosition.y].partOfSequence) {
         return;
       }
       move = MoveType.REMOVE_TOKEN;
       socketEmit = true;
-     } else if (checkIfPlayerHasCard(card)) {
+    } else if (checkIfPlayerHasCard(card)) {
       if (!GameState.board[cardPosition.x][cardPosition.y].token) {
         socketEmit = true;
         var cardType = card.substring(0, card.length - 1);

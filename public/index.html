@@ -1,156 +1,257 @@
 <!-- All rights reserved www.amberzlee.com -->
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
   <meta charset="utf-8" />
   <title>Sequence game</title>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="js/main2.js"></script>
-  <link rel="stylesheet" href="style/main.css"/>
-  </head>
-  <body>
+  <link rel="stylesheet" href="style/main.css" />
+</head>
 
-    <!-- Modal for displaying game lobby -->
-    <div id="myModal" class="modal">
-      <!-- Modal content -->
-      <div class="modal-content" id="modal-content">
-      </div>
+<body>
+
+  <!-- Modal for displaying game lobby -->
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" id="modal-content">
     </div>
+  </div>
 
-    <div class="card-board" id="card-board">
-      <img src="imgs/overlay.png" class="wildcard" style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="2S1" style="background: url(imgs/2S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="3S1" style="background: url(imgs/3S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="4S1" style="background: url(imgs/4S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="5S1" style="background: url(imgs/5S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="6S1" style="background: url(imgs/6S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="7S1" style="background: url(imgs/7S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="8S1" style="background: url(imgs/8S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="card" id="9S1" style="background: url(imgs/9S.png) no-repeat center center;background-size:contain;">
-      </img>
-      <img src="imgs/overlay.png" class="wildcard" style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;">
-      </img>
+  <div class="card-board" id="card-board">
+    <img src="imgs/overlay.png" class="wildcard"
+      style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2S1"
+      style="background: url(imgs/2S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3S1"
+      style="background: url(imgs/3S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4S1"
+      style="background: url(imgs/4S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5S1"
+      style="background: url(imgs/5S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6S1"
+      style="background: url(imgs/6S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7S1"
+      style="background: url(imgs/7S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8S1"
+      style="background: url(imgs/8S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9S1"
+      style="background: url(imgs/9S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="wildcard"
+      style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="6C1" style="background: url(imgs/6C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5C1" style="background: url(imgs/5C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4C1" style="background: url(imgs/4C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3C1" style="background: url(imgs/3C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2C1" style="background: url(imgs/2C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AH1" style="background: url(imgs/AH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KH1" style="background: url(imgs/KH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QH1" style="background: url(imgs/QH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10H1" style="background: url(imgs/10H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10S1" style="background: url(imgs/10S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6C1"
+      style="background: url(imgs/6C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5C1"
+      style="background: url(imgs/5C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4C1"
+      style="background: url(imgs/4C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3C1"
+      style="background: url(imgs/3C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2C1"
+      style="background: url(imgs/2C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AH1"
+      style="background: url(imgs/AH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KH1"
+      style="background: url(imgs/KH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QH1"
+      style="background: url(imgs/QH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10H1"
+      style="background: url(imgs/10H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10S1"
+      style="background: url(imgs/10S.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="7C1" style="background: url(imgs/7C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AS1" style="background: url(imgs/AS.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2D1" style="background: url(imgs/2D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3D1" style="background: url(imgs/3D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4D1" style="background: url(imgs/4D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5D1" style="background: url(imgs/5D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6D1" style="background: url(imgs/6D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7D1" style="background: url(imgs/7D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9H1" style="background: url(imgs/9H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QS1" style="background: url(imgs/QS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7C1"
+      style="background: url(imgs/7C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AS1"
+      style="background: url(imgs/AS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2D1"
+      style="background: url(imgs/2D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3D1"
+      style="background: url(imgs/3D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4D1"
+      style="background: url(imgs/4D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5D1"
+      style="background: url(imgs/5D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6D1"
+      style="background: url(imgs/6D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7D1"
+      style="background: url(imgs/7D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9H1"
+      style="background: url(imgs/9H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QS1"
+      style="background: url(imgs/QS.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="8C1" style="background: url(imgs/8C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KS1" style="background: url(imgs/KS.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6C2" style="background: url(imgs/6C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5C2" style="background: url(imgs/5C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4C2" style="background: url(imgs/4C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3C2" style="background: url(imgs/3C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2C2" style="background: url(imgs/2C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8D1" style="background: url(imgs/8D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8H1" style="background: url(imgs/8H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KS2" style="background: url(imgs/KS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8C1"
+      style="background: url(imgs/8C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KS1"
+      style="background: url(imgs/KS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6C2"
+      style="background: url(imgs/6C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5C2"
+      style="background: url(imgs/5C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4C2"
+      style="background: url(imgs/4C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3C2"
+      style="background: url(imgs/3C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2C2"
+      style="background: url(imgs/2C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8D1"
+      style="background: url(imgs/8D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8H1"
+      style="background: url(imgs/8H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KS2"
+      style="background: url(imgs/KS.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="9C1" style="background: url(imgs/9C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QS2" style="background: url(imgs/QS.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7C2" style="background: url(imgs/7C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6H1" style="background: url(imgs/6H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5H1" style="background: url(imgs/5H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4H1" style="background: url(imgs/4H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AH2" style="background: url(imgs/AH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9D1" style="background: url(imgs/9D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7H1" style="background: url(imgs/7H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AS2"style="background: url(imgs/AS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9C1"
+      style="background: url(imgs/9C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QS2"
+      style="background: url(imgs/QS.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7C2"
+      style="background: url(imgs/7C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6H1"
+      style="background: url(imgs/6H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5H1"
+      style="background: url(imgs/5H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4H1"
+      style="background: url(imgs/4H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AH2"
+      style="background: url(imgs/AH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9D1"
+      style="background: url(imgs/9D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7H1"
+      style="background: url(imgs/7H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AS2"
+      style="background: url(imgs/AS.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="10C1" style="background: url(imgs/10C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10S2" style="background: url(imgs/10S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8C2" style="background: url(imgs/8C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7H2" style="background: url(imgs/7H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2H1" style="background: url(imgs/2H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3H1" style="background: url(imgs/3H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KH2" style="background: url(imgs/KH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10D1" style="background: url(imgs/10D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6H2" style="background: url(imgs/6H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2D2" style="background: url(imgs/2D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10C1"
+      style="background: url(imgs/10C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10S2"
+      style="background: url(imgs/10S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8C2"
+      style="background: url(imgs/8C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7H2"
+      style="background: url(imgs/7H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2H1"
+      style="background: url(imgs/2H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3H1"
+      style="background: url(imgs/3H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KH2"
+      style="background: url(imgs/KH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10D1"
+      style="background: url(imgs/10D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6H2"
+      style="background: url(imgs/6H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2D2"
+      style="background: url(imgs/2D.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="QC1" style="background: url(imgs/QC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9S2" style="background: url(imgs/9S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9C2" style="background: url(imgs/9C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8H2" style="background: url(imgs/8H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9H2" style="background: url(imgs/9H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10H2" style="background: url(imgs/10H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QH2" style="background: url(imgs/QH.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QD1" style="background: url(imgs/QD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5H2" style="background: url(imgs/5H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3D2" style="background: url(imgs/3D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QC1"
+      style="background: url(imgs/QC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9S2"
+      style="background: url(imgs/9S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9C2"
+      style="background: url(imgs/9C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8H2"
+      style="background: url(imgs/8H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9H2"
+      style="background: url(imgs/9H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10H2"
+      style="background: url(imgs/10H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QH2"
+      style="background: url(imgs/QH.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QD1"
+      style="background: url(imgs/QD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5H2"
+      style="background: url(imgs/5H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3D2"
+      style="background: url(imgs/3D.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="KC1" style="background: url(imgs/KC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8S2" style="background: url(imgs/8S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10C2" style="background: url(imgs/10C.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QC2" style="background: url(imgs/QC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KC2" style="background: url(imgs/KC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AC1" style="background: url(imgs/AC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AD1" style="background: url(imgs/AD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KD1" style="background: url(imgs/KD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4H2" style="background: url(imgs/4H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4D2" style="background: url(imgs/4D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KC1"
+      style="background: url(imgs/KC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8S2"
+      style="background: url(imgs/8S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10C2"
+      style="background: url(imgs/10C.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QC2"
+      style="background: url(imgs/QC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KC2"
+      style="background: url(imgs/KC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AC1"
+      style="background: url(imgs/AC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AD1"
+      style="background: url(imgs/AD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KD1"
+      style="background: url(imgs/KD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4H2"
+      style="background: url(imgs/4H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4D2"
+      style="background: url(imgs/4D.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="card" id="AC2" style="background: url(imgs/AC.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7S2" style="background: url(imgs/7S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6S2" style="background: url(imgs/6S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5S2" style="background: url(imgs/5S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="4S2" style="background: url(imgs/4S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3S2" style="background: url(imgs/3S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2S2" style="background: url(imgs/2S.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="2H2" style="background: url(imgs/2H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="3H2" style="background: url(imgs/3H.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="5D2" style="background: url(imgs/5D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AC2"
+      style="background: url(imgs/AC.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7S2"
+      style="background: url(imgs/7S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6S2"
+      style="background: url(imgs/6S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5S2"
+      style="background: url(imgs/5S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="4S2"
+      style="background: url(imgs/4S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3S2"
+      style="background: url(imgs/3S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2S2"
+      style="background: url(imgs/2S.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="2H2"
+      style="background: url(imgs/2H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="3H2"
+      style="background: url(imgs/3H.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="5D2"
+      style="background: url(imgs/5D.png) no-repeat center center;background-size:contain;"></img>
 
-      <img src="imgs/overlay.png" class="wildcard" style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="AD2" style="background: url(imgs/AD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="KD2" style="background: url(imgs/KD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="QD2" style="background: url(imgs/QD.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="10D2" style="background: url(imgs/10D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="9D2" style="background: url(imgs/9D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="8D2" style="background: url(imgs/8D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="7D2" style="background: url(imgs/7D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="card" id="6D2" style="background: url(imgs/6D.png) no-repeat center center;background-size:contain;"></img>
-      <img src="imgs/overlay.png" class="wildcard" style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="wildcard"
+      style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="AD2"
+      style="background: url(imgs/AD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="KD2"
+      style="background: url(imgs/KD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="QD2"
+      style="background: url(imgs/QD.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="10D2"
+      style="background: url(imgs/10D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="9D2"
+      style="background: url(imgs/9D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="8D2"
+      style="background: url(imgs/8D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="7D2"
+      style="background: url(imgs/7D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="card" id="6D2"
+      style="background: url(imgs/6D.png) no-repeat center center;background-size:contain;"></img>
+    <img src="imgs/overlay.png" class="wildcard"
+      style="background: url(imgs/green_back.png) no-repeat center center;background-size:contain;"></img>
+  </div>
+
+  <br>
+  <br>
+
+  <div class="footer">
+    <!-- Switch to enable card hinting -->
+    <label class="switch" id="toggle" style="display:none;">
+      <input type="checkbox" name="checkbox" id="checkbox">
+      <span class="slider round"></span>
+    </label>
+
+    <!-- Switch to rotate board for landscape display -->
+    <label class="switch" id="rotate-toggle" style="display:none;">
+      <input type="checkbox" name="rotate-checkbox" id="rotate-checkbox">
+      <span class="slider round"></span>
+    </label>
+
+    <div class="cards-in-hand" id="cards-in-hand">
     </div>
+  </div>
 
-    <br>
-    <br>
+</body>
 
-    <div class="footer">
-      <label class="switch" id="toggle" style="display:none;">
-        <input type="checkbox" name="checkbox" id="checkbox">
-        <span class="slider round"></span>
-      </label>
-      <div class="cards-in-hand" id="cards-in-hand">
-      </div>
-    </div>
-
-  </body>
 </html>
