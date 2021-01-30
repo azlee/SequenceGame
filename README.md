@@ -1,3 +1,5 @@
+# Added ability to rotate card board
+
 # SequenceGame
 Node.js application for the board game Sequence.
 
