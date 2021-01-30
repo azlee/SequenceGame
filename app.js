@@ -911,7 +911,8 @@ function addPlayerSocketIdToGameLobby(socketId, gameRoomId, playerId) {
 io.on('connection', function(socket) {
   console.log('\n');
   console.log('new connection ' + socket.id);
-  console.log('IP address: ' + socket.request.headers.referer);
+  // This console log only seems to work for connection on your local network.
+  //console.log('IP address: ' + socket.request.headers.referer);
 
   socket.on('disconnect', function() {
     // on disconnect, remove the player from the game
