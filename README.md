@@ -1,4 +1,5 @@
 # Added ability to rotate card board
+I am hosting my own version of the game at [schroedlsequence.ddns.net](http://schroedlsequence.ddns.net)
 
 # SequenceGame
 Node.js application for the board game Sequence.
