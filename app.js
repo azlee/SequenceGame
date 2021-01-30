@@ -410,6 +410,7 @@ function createPlayer(gameRoom, id, name) {
     player.cardsInHand.push(getCard(gameRoom));
   }
   GAME_LOBBIES.get(gameRoom).players.set(id, player);
+  console.log('Created player ' + player.name + ' on team ' + player.team + ' with cards: ' + player.cardsInHand);
   return player;
 }
 
@@ -910,6 +911,7 @@ function addPlayerSocketIdToGameLobby(socketId, gameRoomId, playerId) {
 io.on('connection', function(socket) {
   console.log('\n');
   console.log('new connection ' + socket.id);
+  console.log('IP address: ' + socket.request.headers.referer);
 
   socket.on('disconnect', function() {
     // on disconnect, remove the player from the game
