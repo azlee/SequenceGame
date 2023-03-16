@@ -114,10 +114,10 @@ function numElementInArr(element, arr) {
 ****************************************************************************/
 
 /* Map of all the game lobbies - key is room code and value is the lobby itself */
-var GAME_LOBBIES = new Map();
+const GAME_LOBBIES = new Map();
 
 /* Map of all the connected sockets */
-var SOCKETS_MAP = new Map();
+const SOCKETS_MAP = new Map();
 
 const BOARD_WIDTH = 10;
 
