@@ -451,7 +451,7 @@ function putBorderAroundSequence(sequence) {
   }
 }
 
-//TODO only re render tokens that have changed!!
+// TODO only re render tokens that have changed!!
 function renderTokens(prevBoard) {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
@@ -462,6 +462,10 @@ function renderTokens(prevBoard) {
         let id = card.card;
         let cardDiv = document.getElementById(id);
         cardDiv.src = ColorChip[card.token];
+        if (!cardDiv.style.backgroundImage.includes("linear-gradient")) {
+          const newStyle = `linear-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) ), ${cardDiv.style.backgroundImage}`;
+          cardDiv.style.backgroundImage = newStyle;
+        }
         // remove any drop shadow
         removeDropShadowFilter(cardDiv);
       } else if (prevCard.token != card.token) {
@@ -707,7 +711,7 @@ function createPlayForm(newGame) {
   nameInput.maxLength = "15";
   nameInput.placeholder = "ENTER YOUR NAME";
   let imgDiv = document.createElement("img");
-  imgDiv.src = "/imgs/honor_heart-14.png";
+  imgDiv.src = "./imgs/honor_heart-14.png";
   formDiv.appendChild(imgDiv);
   formDiv.appendChild(document.createElement("br"));
   formDiv.appendChild(nameLabel);
@@ -799,7 +803,7 @@ function createOptionForm() {
   createNewGameButton.innerHTML = "CREATE NEW GAME";
   joinExistingButton.innerHTML = "JOIN EXISTING GAME";
   let imgDiv = document.createElement("img");
-  imgDiv.src = "/imgs/honor_heart-14.png";
+  imgDiv.src = "./imgs/honor_heart-14.png";
   div.appendChild(imgDiv);
   div.appendChild(document.createElement("br"));
   div.appendChild(createNewGameButton);
@@ -879,7 +883,6 @@ function createWinnerModal(winningTeam) {
  * @param modalType: type of modal to display
  */
 function renderModal(modalType, winningTeam) {
-  console.log("render modal", modalType);
   let modal = document.getElementById("myModal");
   let modalContent = document.getElementById("modal-content");
   modalContent.innerHTML = '<span class="close">&times;</span>';
@@ -897,7 +900,7 @@ function renderModal(modalType, winningTeam) {
     modalContent.innerHTML = "";
     const newGame = modalType === ModalType.CREATE_NEW_GAME_FORM;
     const back = document.createElement("a");
-    back.innerHTML = "Back";
+    back.innerHTML = "← Back";
     back.className = "modal-back";
     back.addEventListener("click", () => renderModal(ModalType.GAME_LOBBY));
     const modalHeader = document.createElement("h4");

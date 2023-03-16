@@ -44,14 +44,44 @@ span.dot {
 }
 
 .card-board {
-  margin-top: 6rem;
-  margin-bottom: 10rem;
+  background-color: #e6e6e6;
   display: flex;
   flex-wrap: wrap;
-  background-color: #737373;
+  overflow: auto;
+  margin-top: 6rem;
+  margin-bottom: 10rem;
+  resize: both;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
+  .cards-in-hand {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  .switch {
+    margin-left: 5%;
+  }
+}
+
+@media only screen and (min-width: 700px) and (max-width: 1000px) {
+  .card-board {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+  .cards-in-hand {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+  .switch {
+    margin-left: 10%;
+  }
+}
+
+@media only screen and (min-width: 1000px) and (max-width: 1250px) {
+  .card-board {
+    margin-left: 15%;
+    margin-right: 15%;
+  }
   .cards-in-hand {
     margin-left: 15%;
     margin-right: 15%;
@@ -61,31 +91,17 @@ span.dot {
   }
 }
 
-@media only screen and (min-width: 600px) and (max-width: 1000px) {
+@media only screen and (min-width: 1250px) and (max-width: 2500px) {
   .card-board {
-    margin-left: 25%;
-    margin-right: 25%;
+    margin-left: 20%;
+    margin-right: 20%;
   }
   .cards-in-hand {
-    margin-left: 25%;
-    margin-right: 25%;
+    margin-left: 20%;
+    margin-right: 20%;
   }
   .switch {
-    margin-left: 25%;
-  }
-}
-
-@media only screen and (min-width: 1000px) and (max-width: 2500px) {
-  .card-board {
-    margin-left: 30%;
-    margin-right: 30%;
-  }
-  .cards-in-hand {
-    margin-left: 30%;
-    margin-right: 30%;
-  }
-  .switch {
-    margin-left: 30%;
+    margin-left: 20%;
   }
 }
 
@@ -112,6 +128,7 @@ span.dot {
 
 .card-in-hand {
   box-sizing: border-box;
+  cursor: pointer;
   padding: 0.5rem;
 }
 
@@ -217,7 +234,7 @@ span.dot {
 .modal-content select {
   font-size: 1.25rem;
   padding: 5px;
-  width: 200px;
+  width: 215px;
 }
 
 .modal-content button {
@@ -349,8 +366,8 @@ input:checked + .slider:before {
   color: #666666;
   cursor: pointer;
   float: left;
-  padding: 10px 0 0 20px;
+  padding: 10px 0 0 10px;
 }
 .modal-back:hover {
-  color: #404040;
+  color: #262626;
 }
