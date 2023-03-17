@@ -29,9 +29,9 @@ const SequenceType = {
 };
 
 const ColorChip = {
-  BLUE: "/imgs/blue-chip.png",
-  GREEN: "/imgs/green-chip.png",
-  RED: "/imgs/red-chip.png",
+  BLUE: "./imgs/blue-chip.png",
+  GREEN: "./imgs/green-chip.png",
+  RED: "./imgs/red-chip.png",
 };
 
 const TeamBorderColor = {
@@ -51,14 +51,14 @@ const ModalType = {
 const NUMBER_OF_PLAYERS = [2, 3, 4, 6, 8, 9, 12];
 
 const WINNER_GIFS = [
-  "/imgs/cardWinner.gif",
-  "/imgs/cardWinner2.gif",
-  "/imgs/cardWinner3.gif",
-  "/imgs/cardWinner4.gif",
-  "/imgs/cardWinner5.gif",
-  "/imgs/cardWinner6.gif",
-  "/imgs/cardWinner7.gif",
-  "/imgs/cardWinner8.gif",
+  "./imgs/cardWinner.gif",
+  "./imgs/cardWinner2.gif",
+  "./imgs/cardWinner3.gif",
+  "./imgs/cardWinner4.gif",
+  "./imgs/cardWinner5.gif",
+  "./imgs/cardWinner6.gif",
+  "./imgs/cardWinner7.gif",
+  "./imgs/cardWinner8.gif",
 ];
 
 // Map of the cards and their position in GameState.board
@@ -463,7 +463,7 @@ function renderTokens(prevBoard) {
         let cardDiv = document.getElementById(id);
         cardDiv.src = ColorChip[card.token];
         if (!cardDiv.style.backgroundImage.includes("linear-gradient")) {
-          const newStyle = `linear-gradient( rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) ), ${cardDiv.style.backgroundImage}`;
+          const newStyle = `linear-gradient( rgba(255, 255, 255, 0.75), rgba(0255, 255, 255, 0.75) ), ${cardDiv.style.backgroundImage}`;
           cardDiv.style.backgroundImage = newStyle;
         }
         // remove any drop shadow
@@ -556,7 +556,7 @@ function createPlayingCard(cardType, i) {
   let widthOfCard = 100 / GameState.numCardsPerPerson;
   card.className = "card-in-hand " + cardType;
   card.style = "width:" + widthOfCard + "%";
-  card.src = "/imgs/" + cardType + ".png";
+  card.src = "./imgs/" + cardType + ".png";
   card.addEventListener(
     "click",
     function (event) {

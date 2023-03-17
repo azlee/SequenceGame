@@ -44,7 +44,7 @@ span.dot {
 }
 
 .card-board {
-  background-color: #e6e6e6;
+  background-color: #a6a6a6;
   display: flex;
   flex-wrap: wrap;
   overflow: auto;
@@ -93,15 +93,15 @@ span.dot {
 
 @media only screen and (min-width: 1250px) and (max-width: 2500px) {
   .card-board {
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 17%;
+    margin-right: 17;
   }
   .cards-in-hand {
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 17;
+    margin-right: 17;
   }
   .switch {
-    margin-left: 20%;
+    margin-left: 17;
   }
 }
 
