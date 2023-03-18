@@ -353,40 +353,22 @@ function putBorderAroundSequence(sequence) {
     let leftCard = document.getElementById(cards[0].card);
     if (leftCard) {
       leftCard.style.boxShadow =
-        "inset .2rem .2rem .15rem " +
+        "inset .2rem .2rem 0 " +
         borderColor +
-        ",inset 0 -.2rem .15rem " +
-        borderColor;
-      leftCard.style.webkitBoxShadow =
-        "inset .2rem .2rem .15rem " +
-        borderColor +
-        ",inset 0 -.2rem .15rem " +
+        ",inset 0 -.2rem 0 " +
         borderColor;
     }
     for (let i = 1; i <= 3; i++) {
       let middleCard = document.getElementById(cards[i].card);
       middleCard.style.boxShadow =
-        "inset 0 .2rem .15rem " +
-        borderColor +
-        ",inset 0 -.2rem .15rem " +
-        borderColor;
-      middleCard.style.webkitBoxShadow =
-        "inset 0 .2rem .15rem " +
-        borderColor +
-        ",inset 0 -.2rem .15rem " +
-        borderColor;
+        "inset 0 .2rem 0 " + borderColor + ",inset 0 -.2rem 0 " + borderColor;
     }
     let rightCard = document.getElementById(cards[4].card);
     if (rightCard) {
       rightCard.style.boxShadow =
-        "inset -.2rem .2rem .15rem " +
+        "inset -.2rem .2rem 0 " +
         borderColor +
-        ",inset 0 -.2rem .15rem " +
-        borderColor;
-      rightCard.style.webkitBoxShadow =
-        "inset -.2rem .2rem .15rem " +
-        borderColor +
-        ",inset 0 -.2rem .15rem " +
+        ",inset 0 -.2rem 0 " +
         borderColor;
     }
   } else if (sequence.type === SequenceType.VERTICAL) {
@@ -394,40 +376,22 @@ function putBorderAroundSequence(sequence) {
     let topCard = document.getElementById(cards[0].card);
     if (topCard) {
       topCard.style.boxShadow =
-        "inset .2rem .2rem .15rem " +
+        "inset .2rem .2rem 0 " +
         borderColor +
-        ",inset -.2rem 0 .15rem " +
-        borderColor;
-      topCard.style.webkitBoxShadow =
-        "inset .2rem .2rem .15rem " +
-        borderColor +
-        ",inset -.2rem 0 .15rem " +
+        ",inset -.2rem 0 0 " +
         borderColor;
     }
     for (let i = 1; i <= 3; i++) {
       let middleCard = document.getElementById(cards[i].card);
       middleCard.style.boxShadow =
-        "inset .2rem 0 .15rem " +
-        borderColor +
-        ",inset -.2rem 0 .15rem " +
-        borderColor;
-      middleCard.style.webkitBoxShadow =
-        "inset .2rem 0 .15rem " +
-        borderColor +
-        ",inset -.2rem 0 .15rem " +
-        borderColor;
+        "inset .2rem 0 0 " + borderColor + ",inset -.2rem 0 0 " + borderColor;
     }
     let bottomCard = document.getElementById(cards[4].card);
     if (bottomCard) {
       bottomCard.style.boxShadow =
-        "inset .2rem -.2rem .15rem " +
+        "inset .2rem -.2rem 0 " +
         borderColor +
-        ",inset -.2rem 0 .15rem " +
-        borderColor;
-      bottomCard.style.webkitBoxShadow =
-        "inset .2rem -.2rem .15rem " +
-        borderColor +
-        ",inset -.2rem 0 .15rem " +
+        ",inset -.2rem 0 0 " +
         borderColor;
     }
   } else {
@@ -441,13 +405,15 @@ function putBorderAroundSequence(sequence) {
           borderColor +
           ", inset -.2rem -.2rem .15rem " +
           borderColor;
-        card.style.webkitBoxShadow =
-          "inset .2rem .2rem .15rem " +
-          borderColor +
-          ", inset -.2rem -.2rem .15rem " +
-          borderColor;
       }
     }
+  }
+
+  // make all sequence card backgrounds white
+  for (let i = 0; i < 5; i++) {
+    const cards = sequence.positions;
+    const card = document.getElementById(cards[i].card);
+    card.style.background = "white";
   }
 }
 
@@ -856,13 +822,9 @@ function renderToggle() {
   toggle.style.display = "block";
   let checkbox = document.getElementById("checkbox");
   checkbox.checked = false;
-  checkbox.addEventListener(
-    "change",
-    function () {
-      togglePlayingCards();
-    },
-    false
-  );
+  checkbox.addEventListener("change", function () {
+    togglePlayingCards();
+  });
 }
 
 function createWinnerModal(winningTeam) {

@@ -94,14 +94,14 @@ span.dot {
 @media only screen and (min-width: 1250px) and (max-width: 2500px) {
   .card-board {
     margin-left: 17%;
-    margin-right: 17;
+    margin-right: 17%;
   }
   .cards-in-hand {
-    margin-left: 17;
-    margin-right: 17;
+    margin-left: 17%;
+    margin-right: 17%;
   }
   .switch {
-    margin-left: 17;
+    margin-left: 17%;
   }
 }
 
