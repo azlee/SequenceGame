@@ -1,10 +1,18 @@
-var express = require('express');
-var app = express();
+const fs = require('fs');
+const express = require('express');
+const app = express();
 app.use(express.static('./public'));
-var http = require('http').Server(app);
-var port = 8080;
 
-var io = require('socket.io')(http);
+const https = require('https');
+const server = https.createServer({
+	cert: fs.readFileSync('/home/pi/amber-certs/fullchain.pem'),
+	key: fs.readFileSync('/home/pi/amber-certs/privkey.pem'),
+}, app);
+
+var port = 61000;
+
+var io = require('socket.io')(server);
+// io.set('origins', '*:*');
 
 app.get('/', function(req, res) {
   res.sendFile(__dirname + '/public/default.html');
@@ -908,8 +916,8 @@ function addPlayerSocketIdToGameLobby(socketId, gameRoomId, playerId) {
 
 
 io.on('connection', function(socket) {
-  console.log('\n');
   console.log('new connection ' + socket.id);
+  console.log(socket.handshake.address);
 
   socket.on('disconnect', function() {
     // on disconnect, remove the player from the game
@@ -974,7 +982,7 @@ function sendStateUpdate(gameRoomId) {
   }
 }
 
-http.listen(port, function() {
+server.listen(port, function() {
   console.log('listening on *:' + port);
   console.log('cards is ' + CARDS_IN_DECK.length);
   var cardsCount = 0;
