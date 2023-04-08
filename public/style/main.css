@@ -44,7 +44,7 @@ span.dot {
 }
 
 .card-board {
-  background-color: #a6a6a6;
+  background-color: white;
   display: flex;
   flex-wrap: wrap;
   overflow: auto;
@@ -370,4 +370,31 @@ input:checked + .slider:before {
 }
 .modal-back:hover {
   color: #262626;
+}
+
+.animated {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes flash {
+  from {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.flash {
+  animation-name: flash;
 }

@@ -417,15 +417,14 @@ function putBorderAroundSequence(sequence) {
   }
 }
 
-// TODO only re render tokens that have changed!!
 function renderTokens(prevBoard) {
   for (let i = 0; i < 10; i++) {
     for (let j = 0; j < 10; j++) {
-      let card = GameState.board[i][j];
-      let prevCard = prevBoard[i][j];
+      const card = GameState.board[i][j];
+      const prevCard = prevBoard[i][j];
       // if token, then render the token on the card
       if (card.token) {
-        let id = card.card;
+        const id = card.card;
         let cardDiv = document.getElementById(id);
         cardDiv.src = ColorChip[card.token];
         if (!cardDiv.style.backgroundImage.includes("linear-gradient")) {
@@ -435,9 +434,21 @@ function renderTokens(prevBoard) {
         // remove any drop shadow
         removeDropShadowFilter(cardDiv);
       } else if (prevCard.token != card.token) {
-        let id = card.card;
+        const id = card.card;
         let cardDiv = document.getElementById(id);
         cardDiv.src = "/imgs/overlay.png";
+      }
+
+      // if last placed token then add animation
+      if (
+        GameState.lastPlayedPos?.x === i &&
+        GameState.lastPlayedPos?.y === j
+      ) {
+        if (card.token) {
+          const id = card.card;
+          let cardDiv = document.getElementById(id);
+          cardDiv.className += " animated flash";
+        }
       }
     }
   }
